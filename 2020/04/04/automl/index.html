@@ -27,31 +27,31 @@
 <meta property="og:site_name" content="Eric Chow&#39;s Blog">
 <meta property="og:description" content="With the development of machine learning, demand for AutoML (Automatic Machine Learning) increases. This article split this topic into two, namely AutoML in classic machine learning and that in deep l">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/bayesian_optimization_process.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/objective.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/bayesian_optimization_iteration_0.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/bayesian_optimization_iteration_1.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/bayesian_optimization_iteration_2.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/bayesian_optimization_iteration_3.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/bayesian_optimization_iteration_4.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/nas.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/nas_rnn.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/nas_lstm.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/nas_compare.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/network_morphism.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/network_morphism_linear.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/network_morphism_non_linear.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/network_morphism_parametric_activation.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/network_morphism_width.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/width.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/network_morphism_kernal.png">
-<meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/network_morphism_subnet.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/bayesian_optimization_process.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/objective.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/bayesian_optimization_iteration_0.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/bayesian_optimization_iteration_1.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/bayesian_optimization_iteration_2.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/bayesian_optimization_iteration_3.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/bayesian_optimization_iteration_4.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/nas.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/nas_rnn.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/nas_lstm.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/nas_compare.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/network_morphism.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/network_morphism_linear.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/network_morphism_non_linear.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/network_morphism_parametric_activation.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/network_morphism_width.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/width.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/network_morphism_kernal.png">
+<meta property="og:image" content="https://juwikuang.github.io/blog/images/automl/network_morphism_subnet.png">
 <meta property="article:published_time" content="2020-04-03T16:29:50.000Z">
-<meta property="article:modified_time" content="2020-04-04T13:46:08.127Z">
+<meta property="article:modified_time" content="2020-04-05T17:28:13.638Z">
 <meta property="article:author" content="Eric Chow">
 <meta property="article:tag" content="AutoML">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://juwikuang.github.io/blog_web/images/automl/bayesian_optimization_process.png">
+<meta name="twitter:image" content="https://juwikuang.github.io/blog/images/automl/bayesian_optimization_process.png">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     
@@ -456,17 +456,17 @@ height:50vh;
 <li>Goto 2 unless find extrema.</li>
 </ol>
 <p>The following flowchart demonstrate the process.</p>
-<p><img src="/blog_web/images/automl/bayesian_optimization_process.png" alt="Bayesian Optimization Process"></p>
+<p><img src="/blog/images/automl/bayesian_optimization_process.png" alt="Bayesian Optimization Process"></p>
 <p>Now let’s look at an example. Suppose we have the following function:</p>
-<p><img src="/blog_web/images/automl/objective.png" alt="Bayesian Optimization Objective"></p>
+<p><img src="/blog/images/automl/objective.png" alt="Bayesian Optimization Objective"></p>
 <p>The search space is [0, 1]. Firstly two points x=0 and x=1 are selected, and their y values are calculated using the objective function.</p>
-<p><img src="/blog_web/images/automl/bayesian_optimization_iteration_0.png" alt="Bayesian Optimization Iteration 0"></p>
+<p><img src="/blog/images/automl/bayesian_optimization_iteration_0.png" alt="Bayesian Optimization Iteration 0"></p>
 <p>Then the mean and standard deviation are generated by <strong>Gaussian process</strong> or the surrogate function. The <strong>UCB</strong> (Upper Confidence Bound) algorithm is used as the acquisition function. It simply find the upper confidence bound (red in picture) as the next sample point. </p>
 <p>The BO continues…</p>
-<p><img src="/blog_web/images/automl/bayesian_optimization_iteration_1.png" alt="Bayesian Optimization Iteration 1"></p>
-<p><img src="/blog_web/images/automl/bayesian_optimization_iteration_2.png" alt="Bayesian Optimization Iteration 2"></p>
-<p><img src="/blog_web/images/automl/bayesian_optimization_iteration_3.png" alt="Bayesian Optimization Iteration 3"></p>
-<p><img src="/blog_web/images/automl/bayesian_optimization_iteration_4.png" alt="Bayesian Optimization Iteration 4"></p>
+<p><img src="/blog/images/automl/bayesian_optimization_iteration_1.png" alt="Bayesian Optimization Iteration 1"></p>
+<p><img src="/blog/images/automl/bayesian_optimization_iteration_2.png" alt="Bayesian Optimization Iteration 2"></p>
+<p><img src="/blog/images/automl/bayesian_optimization_iteration_3.png" alt="Bayesian Optimization Iteration 3"></p>
+<p><img src="/blog/images/automl/bayesian_optimization_iteration_4.png" alt="Bayesian Optimization Iteration 4"></p>
 <p>After five iterations, the max value is found.</p>
 <p>The above pictures were generated by a <a href="https://www.github.com/juwikuang/machine_learning_step_by_step/blob/master/bayesian_optimization.ipynb" target="_blank" rel="noopener">notebook</a> from my Github Repo <a href="https://www.github.com/juwikuang/machine_learning_step_by_step" target="_blank" rel="noopener">Machine Learning Step by Step</a>. </p>
 <h2 id="Auto-Sklearn"><a href="#Auto-Sklearn" class="headerlink" title="Auto-Sklearn"></a>Auto-Sklearn</h2><p>Auto-Sklearn[3] used Bayesian Optimization to find the best hyperparameters for machine learning. Beside that, it proposed two new improvements. The first is <strong>meta-learning</strong>. Auto-Sklearn collected several datasets, extracted features from these datasets. These datasets are trained and the best hyperparameters are collected. The dataset features and best hyperparameters are treated as  input and output for machine learning and the relationship is learnt. Thus, the search space is narrow and the algorithm runs faster. The second improvement is ensemble. As we all know ensemble improves accuracy. </p>
@@ -479,28 +479,28 @@ height:50vh;
 
 <p>Official Website: <a href="https://automl.github.io/auto-sklearn/master/" target="_blank" rel="noopener">https://automl.github.io/auto-sklearn/master/</a></p>
 <h1 id="Deep-Learning-in-AutoML"><a href="#Deep-Learning-in-AutoML" class="headerlink" title="Deep Learning in AutoML"></a>Deep Learning in AutoML</h1><h2 id="Neural-Architecture-Search"><a href="#Neural-Architecture-Search" class="headerlink" title="Neural Architecture Search"></a>Neural Architecture Search</h2><p>Neural Architecture Search (NAS) is main research topic in deep learning automation. The rough idea is to treat deep models as strings such that the next layer can be predicted by RNN. NAS named this RNN the <strong>controller</strong>. The original NAS used  reinforcement learning to optimize the parameters.</p>
-<p><img src="/blog_web/images/automl/nas.png" alt="Neural Architecture Search"></p>
-<p><img src="/blog_web/images/automl/nas_rnn.png" alt="Neural Architecture Search RNN"></p>
+<p><img src="/blog/images/automl/nas.png" alt="Neural Architecture Search"></p>
+<p><img src="/blog/images/automl/nas_rnn.png" alt="Neural Architecture Search RNN"></p>
 <p>Some architectures have branches. NAS uses a batch of bi-classifiers to determine if Layer N connects to one of the N-1 layers.</p>
 <p>The following are the original LSTM (upper left) and two LSTM structures NAS found.</p>
-<p><img src="/blog_web/images/automl/nas_lstm.png" alt="Neural Architecture Search LSTM"></p>
+<p><img src="/blog/images/automl/nas_lstm.png" alt="Neural Architecture Search LSTM"></p>
 <p>Xin He[5] summarized all the NAS works. For controllers, grid search, random search, reinforcement learning, evolution algorithm, Bayesian optimization, gradient descent are used. Low fidelity, transfer learning, surrogate, early stopping are used to perform more efficiently.</p>
 <p>The following is a comparison of all the NAS implementations:</p>
-<p><img src="/blog_web/images/automl/nas_compare.png" alt="Neural Architecture Search Compare"></p>
+<p><img src="/blog/images/automl/nas_compare.png" alt="Neural Architecture Search Compare"></p>
 <h2 id="Network-Morphism"><a href="#Network-Morphism" class="headerlink" title="Network Morphism"></a>Network Morphism</h2><p>In the process of NAS, a great number of architectures are tested. If the new network can learn parameters from the old ones, it would be more efficient. Network Morphism[6] provides such a mechanism. Network Morphism named the old and new network the <strong>parent network</strong> and the <strong>child network</strong>. The child network inherit knowledge from the parent network.</p>
-<p><img src="/blog_web/images/automl/network_morphism.png" alt="Network Morphism"></p>
+<p><img src="/blog/images/automl/network_morphism.png" alt="Network Morphism"></p>
 <p>There five cases in Network Morphism, linear , non-linear , stand-alone width, stand-alone kernal and subnet.</p>
-<h3 id="Linear-Case"><a href="#Linear-Case" class="headerlink" title="Linear Case"></a>Linear Case</h3><p><img src="/blog_web/images/automl/network_morphism_linear.png" alt="Network Morphism Linear"></p>
+<h3 id="Linear-Case"><a href="#Linear-Case" class="headerlink" title="Linear Case"></a>Linear Case</h3><p><img src="/blog/images/automl/network_morphism_linear.png" alt="Network Morphism Linear"></p>
 <p>A new layer, Layer L is inserted between Layer L-1 and Layer L+1. B<sub>l-1</sub> and B<sub>l+1</sub> are two matrices and B<sub>l+1</sub>=B<sub>l-1</sub> * G. In order to insert a new layer, we simply split G into two matrices, F<sub>l</sub> and F<sub>l+1</sub> .</p>
-<h3 id="Non-Linear-Case"><a href="#Non-Linear-Case" class="headerlink" title="Non-Linear Case"></a>Non-Linear Case</h3><p><img src="/blog_web/images/automl/network_morphism_non_linear.png" alt="Network Morphism Non-Linear"></p>
+<h3 id="Non-Linear-Case"><a href="#Non-Linear-Case" class="headerlink" title="Non-Linear Case"></a>Non-Linear Case</h3><p><img src="/blog/images/automl/network_morphism_non_linear.png" alt="Network Morphism Non-Linear"></p>
 <p>To insert a non-linear layer between two layers, a new activation function, <strong>parametric activation</strong> is introduced. It starts as an Identity matrix and learn to become an activation function afterwards. It is a wrapper around other activation functions. The equation is as follow:</p>
-<p><img src="/blog_web/images/automl/network_morphism_parametric_activation.png" alt="Network Morphism Parametric Activation"></p>
-<h3 id="Stand-alone-Width"><a href="#Stand-alone-Width" class="headerlink" title="Stand-alone Width"></a>Stand-alone Width</h3><p><img src="/blog_web/images/automl/network_morphism_width.png" alt="Network Morphism Stand-alone Width"></p>
+<p><img src="/blog/images/automl/network_morphism_parametric_activation.png" alt="Network Morphism Parametric Activation"></p>
+<h3 id="Stand-alone-Width"><a href="#Stand-alone-Width" class="headerlink" title="Stand-alone Width"></a>Stand-alone Width</h3><p><img src="/blog/images/automl/network_morphism_width.png" alt="Network Morphism Stand-alone Width"></p>
 <p>We calculate the equations from the above chart. We finally will have the following:</p>
-<p><img src="/blog_web/images/automl/width.png" alt="Network Morphism Stand-alone Width"></p>
-<h3 id="Kernal"><a href="#Kernal" class="headerlink" title="Kernal"></a>Kernal</h3><p><img src="/blog_web/images/automl/network_morphism_kernal.png" alt="Network Morphism Stand-alone Kernal"></p>
+<p><img src="/blog/images/automl/width.png" alt="Network Morphism Stand-alone Width"></p>
+<h3 id="Kernal"><a href="#Kernal" class="headerlink" title="Kernal"></a>Kernal</h3><p><img src="/blog/images/automl/network_morphism_kernal.png" alt="Network Morphism Stand-alone Kernal"></p>
 <p>For kernals, we simply do padding.</p>
-<h3 id="Subnet"><a href="#Subnet" class="headerlink" title="Subnet"></a>Subnet</h3><p><img src="/blog_web/images/automl/network_morphism_subnet.png" alt="Network Morphism Subnet"></p>
+<h3 id="Subnet"><a href="#Subnet" class="headerlink" title="Subnet"></a>Subnet</h3><p><img src="/blog/images/automl/network_morphism_subnet.png" alt="Network Morphism Subnet"></p>
 <p>Firstly, we insert the layers one by one. this is sequential subnet morphing. We then stack them by simply split G into a group of G, each is G/n.</p>
 <h2 id="Auto-Keras"><a href="#Auto-Keras" class="headerlink" title="Auto-Keras"></a>Auto-Keras</h2><p>Auto-Keras is an open source based on Keras. It uses Bayesian optimization and network morphism. It trains CNN, RNN and traditional DNN.</p>
 <p>Sample code:</p>
@@ -526,7 +526,7 @@ height:50vh;
             <p>Author：<a href="https://juwikuang.github.io/blog">Eric Chow</a>
             <p>Url: <a href="https://juwikuang.github.io/blog/2020/04/04/automl/">https://juwikuang.github.io/blog/2020/04/04/automl/</a>
             <p>Publish Date: <a href="https://juwikuang.github.io/blog/2020/04/04/automl/">April 4th 2020, 12:29:50 am</a>
-            <p>Updated Date: <a href="https://juwikuang.github.io/blog/2020/04/04/automl/">April 4th 2020, 9:46:08 pm</a>
+            <p>Updated Date: <a href="https://juwikuang.github.io/blog/2020/04/04/automl/">April 6th 2020, 1:28:13 am</a>
             <p>License: We use <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">creativecommons 4.0 </a>license</p>
         </div>
     
