@@ -23,7 +23,7 @@
     <meta name="description" content="With the development of machine learning, demand for AutoML (Automatic Machine Learning) increases. This article split this topic into two, namely AutoML in classic machine learning and that in deep l">
 <meta property="og:type" content="article">
 <meta property="og:title" content="AutoML Introduction">
-<meta property="og:url" content="https://juwikuang.github.io/blog_web/2020/04/04/automl/index.html">
+<meta property="og:url" content="https://juwikuang.github.io/blog/2020/04/04/automl/index.html">
 <meta property="og:site_name" content="Eric Chow&#39;s Blog">
 <meta property="og:description" content="With the development of machine learning, demand for AutoML (Automatic Machine Learning) increases. This article split this topic into two, namely AutoML in classic machine learning and that in deep l">
 <meta property="og:locale" content="en_US">
@@ -47,7 +47,7 @@
 <meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/network_morphism_kernal.png">
 <meta property="og:image" content="https://juwikuang.github.io/blog_web/images/automl/network_morphism_subnet.png">
 <meta property="article:published_time" content="2020-04-03T16:29:50.000Z">
-<meta property="article:modified_time" content="2020-04-04T08:15:28.951Z">
+<meta property="article:modified_time" content="2020-04-04T13:46:08.127Z">
 <meta property="article:author" content="Eric Chow">
 <meta property="article:tag" content="AutoML">
 <meta name="twitter:card" content="summary">
@@ -59,7 +59,7 @@
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
-        src: url("/blog_web/font/Oswald-Regular.ttf");
+        src: url("/blog/font/Oswald-Regular.ttf");
     }
 
     body {
@@ -108,8 +108,8 @@
 
 </style>
 
-    <link rel="preload" href= "/blog_web/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <link rel="stylesheet" href= "/blog_web/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    <link rel="preload" href= "/blog/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/blog/css/mobile.css?v=20180824" media="(max-width: 980px)">
     
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     
@@ -220,11 +220,11 @@
 }( typeof global !== "undefined" ? global : this ) );
 </script>
 
-    <link rel="icon" href= "/blog_web/assets/favicon.ico" />
+    <link rel="icon" href= "/blog/assets/favicon.ico" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
-    <link rel="preload" href="/blog_web/scripts/main.js" as="script" />
-    <link rel="preload" as="font" href="/blog_web/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" href="/blog/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/blog/font/Oswald-Regular.ttf" crossorigin>
     <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
     
     <!-- fancybox -->
@@ -247,14 +247,14 @@
     
     <div class="banner">
             <div class="blog-title">
-                <a href="/blog_web/" >Eric Chow&#39;s Studio</a>
+                <a href="/blog/" >Eric Chow&#39;s Studio</a>
             </div>
             <div class="post-title">
                 <a href="#" class="post-name">AutoML Introduction</a>
             </div>
     </div>
     
-    <a class="home-link" href=/blog_web/>Eric Chow's Studio</a>
+    <a class="home-link" href=/blog/>Eric Chow's Studio</a>
 </header>
     <div class="wrapper">
         <div class="site-intro" style="
@@ -274,7 +274,7 @@ height:50vh;
     <!-- 404页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/blog_web/intro/post-bg.jpg)"></div>
+    <div class="site-intro-img" style="background-image: url(/blog/intro/post-bg.jpg)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
@@ -427,10 +427,10 @@ height:50vh;
   asyncLoadWithFallBack([
     "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
     "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
-    "/blog_web/lib/webfontloader.min.js"
+    "/blog/lib/webfontloader.min.js"
   ], asyncCb, asyncErr)
 </script>        
-        <img class="loading" src="/blog_web/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <img class="loading" src="/blog/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
@@ -468,6 +468,7 @@ height:50vh;
 <p><img src="/blog_web/images/automl/bayesian_optimization_iteration_3.png" alt="Bayesian Optimization Iteration 3"></p>
 <p><img src="/blog_web/images/automl/bayesian_optimization_iteration_4.png" alt="Bayesian Optimization Iteration 4"></p>
 <p>After five iterations, the max value is found.</p>
+<p>The above pictures were generated by a <a href="https://www.github.com/juwikuang/machine_learning_step_by_step/blob/master/bayesian_optimization.ipynb" target="_blank" rel="noopener">notebook</a> from my Github Repo <a href="https://www.github.com/juwikuang/machine_learning_step_by_step" target="_blank" rel="noopener">Machine Learning Step by Step</a>. </p>
 <h2 id="Auto-Sklearn"><a href="#Auto-Sklearn" class="headerlink" title="Auto-Sklearn"></a>Auto-Sklearn</h2><p>Auto-Sklearn[3] used Bayesian Optimization to find the best hyperparameters for machine learning. Beside that, it proposed two new improvements. The first is <strong>meta-learning</strong>. Auto-Sklearn collected several datasets, extracted features from these datasets. These datasets are trained and the best hyperparameters are collected. The dataset features and best hyperparameters are treated as  input and output for machine learning and the relationship is learnt. Thus, the search space is narrow and the algorithm runs faster. The second improvement is ensemble. As we all know ensemble improves accuracy. </p>
 <p>I installed Auto-Sklearn. The Tatanic Survive and Boston House Price datasets are used. Each took one hour to finish on an i7 CPU. The scores are 0.76 and 0.85. Not too bad. </p>
 <p>Auto-Sklearn focuses on the CASH problem. it does not handle data preprocessing. I have to remove string features like names and tickets in advance. Categorical features like embark place, gender have to be transformed to Boolean values or one-hot values.</p>
@@ -522,10 +523,10 @@ height:50vh;
     <!-- license  -->
     
         <div class="license-wrapper">
-            <p>Author：<a href="https://juwikuang.github.io/blog_web">Eric Chow</a>
-            <p>Url: <a href="https://juwikuang.github.io/blog_web/2020/04/04/automl/">https://juwikuang.github.io/blog_web/2020/04/04/automl/</a>
-            <p>Publish Date: <a href="https://juwikuang.github.io/blog_web/2020/04/04/automl/">April 4th 2020, 12:29:50 am</a>
-            <p>Updated Date: <a href="https://juwikuang.github.io/blog_web/2020/04/04/automl/">April 4th 2020, 4:15:28 pm</a>
+            <p>Author：<a href="https://juwikuang.github.io/blog">Eric Chow</a>
+            <p>Url: <a href="https://juwikuang.github.io/blog/2020/04/04/automl/">https://juwikuang.github.io/blog/2020/04/04/automl/</a>
+            <p>Publish Date: <a href="https://juwikuang.github.io/blog/2020/04/04/automl/">April 4th 2020, 12:29:50 am</a>
+            <p>Updated Date: <a href="https://juwikuang.github.io/blog/2020/04/04/automl/">April 4th 2020, 9:46:08 pm</a>
             <p>License: We use <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">creativecommons 4.0 </a>license</p>
         </div>
     
@@ -691,7 +692,7 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">04/04</span><a class="archive-post-title" href= "/blog_web/2020/04/04/automl/" >AutoML Introduction</a>
+            <span class="archive-post-date">04/04</span><a class="archive-post-title" href= "/blog/2020/04/04/automl/" >AutoML Introduction</a>
         </li>
     
     </div>
@@ -742,7 +743,7 @@ jsonContent:
 </div> 
     <script>
     var siteMeta = {
-        root: "/blog_web/",
+        root: "/blog/",
         author: "Eric Chow"
     }
 </script>
@@ -752,10 +753,10 @@ jsonContent:
         if (typeof window.$ === 'undefined')
         {
             console.warn('jquery load from jsdelivr failed, will load local script')
-            document.write('<script src="/blog_web/lib/jquery.min.js">\x3C/script>')
+            document.write('<script src="/blog/lib/jquery.min.js">\x3C/script>')
         }
     </script>
-    <script src="/blog_web/scripts/main.js"></script>
+    <script src="/blog/scripts/main.js"></script>
     <!-- algolia -->
     
     <!-- busuanzi  -->
@@ -767,7 +768,7 @@ jsonContent:
     </div>
     <!-- async load share.js -->
     
-        <script src="/blog_web/scripts/share.js" async></script>    
+        <script src="/blog/scripts/share.js" async></script>    
      
     </body>
 </html>
