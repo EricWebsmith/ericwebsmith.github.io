@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Eric Websmith">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Eric Websmith">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="">
+    <meta name="description" content="Gradient Boosting (GB) algorithm trains a series of weak learners and each focuses on the errors the previous learners have made and tries to improve it. Together, they make a better prediction. Accor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradient Boosting Regression from Scratch">
+<meta property="og:url" content="https://ericwebsmith.github.io/2020/04/12/GradientBoostingRegression/index.html">
+<meta property="og:site_name" content="Eric Websmith&#39;s Blog">
+<meta property="og:description" content="Gradient Boosting (GB) algorithm trains a series of weak learners and each focuses on the errors the previous learners have made and tries to improve it. Together, they make a better prediction. Accor">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_regression/gradient_boosting_regression.png">
+<meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_regression/tree0.png">
+<meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_regression/tree1.png">
+<meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_regression/tree2.png">
+<meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_regression/tree3.png">
+<meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_regression/tree4.png">
+<meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_regression/loss.png">
+<meta property="article:published_time" content="2020-04-12T06:44:42.000Z">
+<meta property="article:modified_time" content="2020-04-12T08:45:22.478Z">
+<meta property="article:author" content="Eric Websmith">
+<meta property="article:tag" content="gradient boosting">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ericwebsmith.github.io/images/gradient_boosting_regression/gradient_boosting_regression.png">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    
+    <title>Gradient Boosting Regression from Scratch · Eric Websmith&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+<meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+    
+        <body class="post-body">
+    
+    
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Eric Websmith&#39;s Studio</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Gradient Boosting Regression from Scratch</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Eric Websmith's Studio</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Gradient Boosting Regression from Scratch
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "gradient boosting">gradient boosting</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count word-count">2.2k</span>Reading time: <span class="post-count reading-time">13 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/04/12</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>Gradient Boosting (GB) algorithm trains a series of weak learners and each focuses on the errors the previous learners have made and tries to improve it. Together, they make a better prediction.</p>
+<p>According to Wikipedia, Gradient boosting is a machine learning technique for regression and classification problems, which produces a prediction model in the form of an ensemble of weak prediction models, typically decision trees. It builds the model in a stage-wise fashion as other boosting methods do, and it generalizes them by allowing optimization of an arbitrary differentiable loss function. </p>
+<p>Prerequisite</p>
+<pre><code>1. Linear regression and gradient descent
+2. Decision Tree
+</code></pre><p>After studying this post, you will be able to:</p>
+<pre><code>1. Explain gradient boosting algorithm.
+2. Explain gradient boosting regression algorithm.
+3. Write a gradient boosting regressor from scratch
+</code></pre><h1 id="The-algorithm"><a href="#The-algorithm" class="headerlink" title="The algorithm"></a>The algorithm</h1><p>The following plot illustrates the algorithm.</p>
+<p><img src="/images/gradient_boosting_regression/gradient_boosting_regression.png" alt="Gradient Boosting Regression"></p>
+<p>From the plot above, the first part is a stump, which is the average of <strong>y</strong>. We then add several trees to it. In the following trees, the target is not y. Instead, the target is the residual or the true value subtract previous prediction.</p>
+<script type="math/tex; mode=display">
+residual=true\_value - previous\_prediction</script><p>That is why we say in Gradient Boosting trains a series of weak learners, each focuses on the errors of the previous one. The residual predictions are multiplied by the learning rate (0.1 here) before added to the average.</p>
+<hr>
+<p><strong>The Steps</strong></p>
+<p>Step 1: Calculate the average of y. The average is also the first estimation of y:</p>
+<script type="math/tex; mode=display">
+\bar{y}=\frac{1}{n} \sum_{i=1}^{n}y_i</script><script type="math/tex; mode=display">
+F_0(x)=\bar{y}</script><p>Step 2 for m in 1 to M: <br /></p>
+<ul>
+<li><p>Step 2.1: Compute so-call pseudo-residuals:</p>
+<script type="math/tex; mode=display">
+r_{im}=y_i-F_{m-1}(x_i)</script></li>
+<li><p>Step 2.2: Fit a regression tree <script type="math/tex">t_m(x)</script> to pseudo-residuals and create terminal regions (leafs) <script type="math/tex">R_{jm}</script> for <script type="math/tex">j=1...Jm</script> <br /></p>
+</li>
+<li><p>Step 2.3: For each leaf of the tree, there are $p_j$ elements, compute $\gamma$ as the following equation. <br /></p>
+</li>
+</ul>
+<script type="math/tex; mode=display">
+\gamma_{im}=\frac{1}{p_j} \sum_{x_i \in R_{jm}} r_{im}</script><ul>
+<li><p>(In practice, the regression tree will do this for us.)</p>
+</li>
+<li><p>Step 2.4: Update the model with learning rate $\alpha$:</p>
+<script type="math/tex; mode=display">
+F_m(x)=F_{m-1}+\alpha\gamma_m</script></li>
+</ul>
+<p>Step 3. Output <script type="math/tex">F_M(x)</script></p>
+<hr>
+<p>In practise the regression tree will average the leaf for us. Thus, Step 2.2 and 2.3 can be combined into one step. And the steps can be simplified:</p>
+<hr>
+<p><strong>New The Steps</strong></p>
+<p>Step 1: Calculate the average of y. The average is also the first estimation of y:</p>
+<script type="math/tex; mode=display">
+\bar{y}=\frac{1}{n} \sum_{i=1}^{n}y_i</script><script type="math/tex; mode=display">
+F_0(x)=\bar{y}</script><p>Step 2 for m in 1 to M: <br /></p>
+<ul>
+<li>Step 2.1: Compute so-call pseudo-residuals:<script type="math/tex; mode=display">
+r_{im}=y_i-F_{m-1}(x_i)</script></li>
+<li><p>Step 2.2: Fit a regression tree $t_m(x)$ to pseudo-residuals</p>
+</li>
+<li><p>Step 2.3: Update the model with learning rate $\alpha$:</p>
+<script type="math/tex; mode=display">
+F_m(x)=F_{m-1}+\alpha t_m(x)</script></li>
+</ul>
+<p>Step 3. Output </p>
+<script type="math/tex; mode=display">
+F_M(x)</script><hr>
+<h1 id="Optional-From-Gradient-Boosting-to-Gradient-Boosting-Regression"><a href="#Optional-From-Gradient-Boosting-to-Gradient-Boosting-Regression" class="headerlink" title="(Optional) From Gradient Boosting to Gradient Boosting Regression"></a>(Optional) From Gradient Boosting to Gradient Boosting Regression</h1><p>The above knowledge is enough for writing BGR code from scratch. But I want to explain more about gradient boosting. GB is a meta-algorithm that can be applied to both regression and classification. The above one is only a specific form for regression. In the following, I will introduce the general gradient boosting algorithm and deduce GBR from GB.</p>
+<p>Let’s first look at the GB steps</p>
+<hr>
+<p><strong>The Steps</strong></p>
+<p>Input: training set <script type="math/tex">\{(x_i, y_i)\}_{i=1}^{n}</script>, a differentiable loss function <script type="math/tex">L(y, F(x))</script>, number of iterations M</p>
+<p>Algorithm:</p>
+<p>Step 1: Initialize model with a constant value:</p>
+<script type="math/tex; mode=display">
+F_0(x)=\underset{\gamma}{\operatorname{argmin}}\sum_{i=1}^{n}L(y_i, \gamma)</script><p>Step 2 for m in 1 to M: <br /></p>
+<ul>
+<li>Step 2.1: Compute so-call pseudo-residuals:</li>
+</ul>
+<script type="math/tex; mode=display">
+r_{im}=-[\frac{\partial L(y_i, F(x_i))}{\partial F(x_i)}]_{F(x)=F_{m-1}(x)}</script><ul>
+<li><p>Step 2.2: Fit a weak learner <script type="math/tex">h_m(x)</script> to pseudo-residuals. and create terminal regions <script type="math/tex">R_{jm}</script>, for <script type="math/tex">j=1...J_m</script><br /></p>
+</li>
+<li><p>Step 2.3: For each leaf of the tree, compute $\gamma$ as following equation. <br /></p>
+</li>
+</ul>
+<script type="math/tex; mode=display">
+\gamma_{jm}=\underset{\gamma}{\operatorname{argmin}}\sum_{x_i \in R_{jm}}^{n}L(y_i, F_{m-1}(x_i)+\gamma)</script><ul>
+<li>Step 2.4: Update the model with learning rate $\alpha$:<script type="math/tex; mode=display">
+F_m(x)=F_{m-1}+\alpha\gamma_m</script></li>
+</ul>
+<p>Step 3. Output <script type="math/tex">F_M(x)</script></p>
+<hr>
+<p>To deduce the GB to GBR, I simply define a loss function and solve the loss function in step 1, 2.1 and 2.3. We use sum of squared errror(SSE) as the loss function:</p>
+<script type="math/tex; mode=display">
+L(y, \gamma)=\frac{1}{2}\sum_{i=1}^{n}(y_i-\gamma)^2</script><p>For step 1:</p>
+<p>Because SSE is a convex and at the lowest point where the derivative is zero, we have the following:</p>
+<script type="math/tex; mode=display">
+\frac{\partial L(y, F_0)}{\partial F_0}=\frac{\partial \frac{1}{2}\sum_{i=1}^{n}(y_i-F_0)^2}{\partial F_0}
+=\sum_{i=1}^{n} (y_i-F_0)=0</script><p>Thus, we have:</p>
+<script type="math/tex; mode=display">
+F_0=\frac{1}{n}\sum_{i=1}^{n}y_i</script><p>For step 2.1:</p>
+<script type="math/tex; mode=display">
+r_{im}=-[\frac{\partial L(y_i, F(x_i))}{\partial F(x_i)}]_{F(x)=F_{m-1}(x)}</script><script type="math/tex; mode=display">
+=-[\frac{\partial \frac{1}{2}\sum_{i=1}^{n}(y_i-F_{m-1}(x_i))^2)}{\partial F_{m-1}(x_i)}]_{F(x)=F_{m-1}(x)}</script><p>(The chain rule)</p>
+<script type="math/tex; mode=display">
+=--2*\frac{1}{2}(y_i-F_{m-1}(x_i))</script><script type="math/tex; mode=display">
+=y_i-F_{m-1}(x_i)</script><p>For step 2.3:</p>
+<p>Similarly, the result is:</p>
+<script type="math/tex; mode=display">
+\gamma_{jm}=\frac{1}{p_j}\sum_{x_i \in R_j}r_{im}</script><h1 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h1><p>Let’s first import the modules.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeRegressor</span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_boston</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> graphviz </span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> tree</span><br></pre></td></tr></table></figure>
+<p>And load data.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">df=pd.DataFrame()</span><br><span class="line">df[<span class="string">'name'</span>]=[<span class="string">'Alex'</span>,<span class="string">'Brunei'</span>,<span class="string">'Candy'</span>,<span class="string">'David'</span>,<span class="string">'Eric'</span>,<span class="string">'Felicity'</span>]</span><br><span class="line">df[<span class="string">'height'</span>]=[<span class="number">1.6</span>,<span class="number">1.6</span>,<span class="number">1.5</span>,<span class="number">1.8</span>,<span class="number">1.5</span>,<span class="number">1.4</span>]</span><br><span class="line">df[<span class="string">'gender'</span>]=[<span class="string">'male'</span>,<span class="string">'female'</span>,<span class="string">'female'</span>,<span class="string">'male'</span>,<span class="string">'male'</span>,<span class="string">'female'</span>]</span><br><span class="line">df[<span class="string">'weight'</span>]=[<span class="number">88</span>, <span class="number">76</span>, <span class="number">56</span>, <span class="number">73</span>, <span class="number">77</span>, <span class="number">57</span>]</span><br><span class="line">display(df)</span><br><span class="line"></span><br><span class="line">X=df[[<span class="string">'height'</span>,<span class="string">'gender'</span>]].copy()</span><br><span class="line">X.loc[X[<span class="string">'gender'</span>]==<span class="string">'male'</span>,<span class="string">'gender'</span>]=<span class="number">1</span></span><br><span class="line">X.loc[X[<span class="string">'gender'</span>]==<span class="string">'female'</span>,<span class="string">'gender'</span>]=<span class="number">0</span></span><br><span class="line">y=df[<span class="string">'weight'</span>]</span><br><span class="line">display(X)</span><br><span class="line"></span><br><span class="line">n=df.shape[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+<p>The data is display as:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>height</th>
+<th>gender</th>
+<th>weight</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Alex</td>
+<td>1.6</td>
+<td>male</td>
+<td>88</td>
+</tr>
+<tr>
+<td>Brunei</td>
+<td>1.6</td>
+<td>female</td>
+<td>76</td>
+</tr>
+<tr>
+<td>Candy</td>
+<td>1.5</td>
+<td>female</td>
+<td>56</td>
+</tr>
+<tr>
+<td>David</td>
+<td>1.8</td>
+<td>male</td>
+<td>73</td>
+</tr>
+<tr>
+<td>Eric</td>
+<td>1.5</td>
+<td>male</td>
+<td>77</td>
+</tr>
+<tr>
+<td>Felicity</td>
+<td>1.4</td>
+<td>female</td>
+<td>57</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>And X is:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>height</th>
+<th>gender</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.6</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1.6</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1.5</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1.8</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1.5</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1.4</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="Step-1-Average"><a href="#Step-1-Average" class="headerlink" title="Step 1 Average"></a>Step 1 Average</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#now let's get started</span></span><br><span class="line">learning_rate=<span class="number">0.2</span></span><br><span class="line">loss = [<span class="number">0</span>] * <span class="number">6</span></span><br><span class="line">residuals = np.zeros([<span class="number">6</span>,n])</span><br><span class="line">predictoin = np.zeros([<span class="number">6</span>,n])</span><br><span class="line"><span class="comment">#calculation</span></span><br><span class="line">average_y=y.mean()</span><br><span class="line">predictoin[<span class="number">0</span>] = [average_y] * n</span><br><span class="line">residuals[<span class="number">0</span>] = y - predictoin[<span class="number">0</span>]</span><br><span class="line">df[<span class="string">'$f_0$'</span>]=predictoin[<span class="number">0</span>]</span><br><span class="line">df[<span class="string">'$r_0$'</span>]=residuals[<span class="number">0</span>]</span><br><span class="line">display(df)</span><br><span class="line">loss[<span class="number">0</span>] = np.sum(residuals[<span class="number">0</span>] ** <span class="number">2</span>)</span><br><span class="line">trees = []</span><br></pre></td></tr></table></figure>
+<p>The average and residuals are as following:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>name</th>
+<th style="text-align:right">height</th>
+<th>gender</th>
+<th style="text-align:right">weight</th>
+<th>𝑓0</th>
+<th style="text-align:right">𝑟0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Alex</td>
+<td style="text-align:right">1.6</td>
+<td>male</td>
+<td style="text-align:right">88</td>
+<td>71.166667</td>
+<td style="text-align:right">16.833333</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Brunei</td>
+<td style="text-align:right">1.6</td>
+<td>female</td>
+<td style="text-align:right">76</td>
+<td>71.166667</td>
+<td style="text-align:right">4.833333</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Candy</td>
+<td style="text-align:right">1.5</td>
+<td>female</td>
+<td style="text-align:right">56</td>
+<td>71.166667</td>
+<td style="text-align:right">-15.166667</td>
+</tr>
+<tr>
+<td>3</td>
+<td>David</td>
+<td style="text-align:right">1.8</td>
+<td>male</td>
+<td style="text-align:right">73</td>
+<td>71.166667</td>
+<td style="text-align:right">1.833333</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Eric</td>
+<td style="text-align:right">1.5</td>
+<td>male</td>
+<td style="text-align:right">77</td>
+<td>71.166667</td>
+<td style="text-align:right">5.833333</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Felicity</td>
+<td style="text-align:right">1.4</td>
+<td>female</td>
+<td style="text-align:right">57</td>
+<td>71.166667</td>
+<td style="text-align:right">-14.166667</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>In the first step, we calculate the average 71.2 as the initial prediction. The pseudo residuals are 16.8, 4.8, etc.</p>
+<h2 id="Step-2-For-Loop"><a href="#Step-2-For-Loop" class="headerlink" title="Step 2 For Loop"></a>Step 2 For Loop</h2><p>We define each iteration as following and we will call it from i=0 to 5.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">iterate</span><span class="params">(i)</span>:</span></span><br><span class="line">    t = DecisionTreeRegressor(max_depth=<span class="number">1</span>)</span><br><span class="line">    t.fit(X,residuals[i])</span><br><span class="line">    trees.append(t)</span><br><span class="line">    <span class="comment">#next prediction, residual</span></span><br><span class="line">    predictoin[i+<span class="number">1</span>]=predictoin[i]+learning_rate * t.predict(X)</span><br><span class="line">    residuals[i+<span class="number">1</span>]=y-predictoin[i+<span class="number">1</span>]</span><br><span class="line">    loss[i+<span class="number">1</span>] = np.sum(residuals[i+<span class="number">1</span>] ** <span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line">    df[<span class="string">f'$\gamma_<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>$'</span>]=t.predict(X)</span><br><span class="line">    df[<span class="string">f'$f_<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>$'</span>]=predictoin[i+<span class="number">1</span>]</span><br><span class="line">    df[<span class="string">f'$r_<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>$'</span>]=residuals[i+<span class="number">1</span>]</span><br><span class="line">    </span><br><span class="line">    display(df[[<span class="string">'name'</span>,<span class="string">'height'</span>,<span class="string">'gender'</span>,<span class="string">'weight'</span>,<span class="string">f'$f_<span class="subst">&#123;i&#125;</span>$'</span>,<span class="string">f'$r_<span class="subst">&#123;i&#125;</span>$'</span>,<span class="string">f'$\gamma_<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>$'</span>,<span class="string">f'$f_<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>$'</span>,<span class="string">f'$r_<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>$'</span>]])</span><br><span class="line">    </span><br><span class="line">    dot_data = tree.export_graphviz(t, out_file=<span class="literal">None</span>, filled=<span class="literal">True</span>, rounded=<span class="literal">True</span>,feature_names=X.columns) </span><br><span class="line">    graph = graphviz.Source(dot_data) </span><br><span class="line">    display(graph)</span><br></pre></td></tr></table></figure>
+<h3 id="Iteration-0"><a href="#Iteration-0" class="headerlink" title="Iteration 0"></a>Iteration 0</h3><p><img src="/images/gradient_boosting_regression/tree0.png" alt="Iteration 0"></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>name</th>
+<th style="text-align:right">height</th>
+<th>gender</th>
+<th style="text-align:right">weight</th>
+<th style="text-align:right">𝑓0</th>
+<th style="text-align:right">𝑟0</th>
+<th style="text-align:right">𝛾1</th>
+<th style="text-align:right">𝑓1</th>
+<th style="text-align:right">𝑟1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Alex</td>
+<td style="text-align:right">1.6</td>
+<td>male</td>
+<td style="text-align:right">88</td>
+<td style="text-align:right">71.166667</td>
+<td style="text-align:right">16.833333</td>
+<td style="text-align:right">8.166667</td>
+<td style="text-align:right">72.800000</td>
+<td style="text-align:right">15.200000</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Brunei</td>
+<td style="text-align:right">1.6</td>
+<td>female</td>
+<td style="text-align:right">76</td>
+<td style="text-align:right">71.166667</td>
+<td style="text-align:right">4.833333</td>
+<td style="text-align:right">-8.166667</td>
+<td style="text-align:right">69.533333</td>
+<td style="text-align:right">6.466667</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Candy</td>
+<td style="text-align:right">1.5</td>
+<td>female</td>
+<td style="text-align:right">56</td>
+<td style="text-align:right">71.166667</td>
+<td style="text-align:right">-15.166667</td>
+<td style="text-align:right">-8.166667</td>
+<td style="text-align:right">69.533333</td>
+<td style="text-align:right">-13.533333</td>
+</tr>
+<tr>
+<td>3</td>
+<td>David</td>
+<td style="text-align:right">1.8</td>
+<td>male</td>
+<td style="text-align:right">73</td>
+<td style="text-align:right">71.166667</td>
+<td style="text-align:right">1.833333</td>
+<td style="text-align:right">8.166667</td>
+<td style="text-align:right">72.800000</td>
+<td style="text-align:right">0.200000</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Eric</td>
+<td style="text-align:right">1.5</td>
+<td>male</td>
+<td style="text-align:right">77</td>
+<td style="text-align:right">71.166667</td>
+<td style="text-align:right">5.833333</td>
+<td style="text-align:right">8.166667</td>
+<td style="text-align:right">72.800000</td>
+<td style="text-align:right">4.200000</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Felicity</td>
+<td style="text-align:right">1.4</td>
+<td>female</td>
+<td style="text-align:right">57</td>
+<td style="text-align:right">71.166667</td>
+<td style="text-align:right">-14.166667</td>
+<td style="text-align:right">-8.166667</td>
+<td style="text-align:right">69.533333</td>
+<td style="text-align:right">-12.533333</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>In Iteration 0, we first train a tree using residuals_0. This tree tells us that males are higher than females, each male should add 8.167 kg, each female subtracts -8.167 kg. The result of the tree is <script type="math/tex">\gamma</script> here. But, we want to take just a small step a time, so we multiply the learning rate <script type="math/tex">\alpha=0.2</script>. Thus, the new prediction is <script type="math/tex">prediction=prediction+\alpha\gamma</script>. That is to say, for each male, he will add <script type="math/tex">8.167*0.2=1.6334</script> kg. For each female, she will lose <script type="math/tex">-8.167*0.2=-1.6334</script> kg. Finally, the males are predicted 72.8 kg and females 69.5. </p>
+<h3 id="Iteration-1"><a href="#Iteration-1" class="headerlink" title="Iteration 1"></a>Iteration 1</h3><p><img src="/images/gradient_boosting_regression/tree1.png" alt="Iteration 1"></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>name</th>
+<th style="text-align:right">height</th>
+<th>gender</th>
+<th style="text-align:right">weight</th>
+<th style="text-align:right">𝑓1</th>
+<th style="text-align:right">𝑟1</th>
+<th style="text-align:right">𝛾2</th>
+<th style="text-align:right">𝑓2</th>
+<th style="text-align:right">𝑟2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Alex</td>
+<td style="text-align:right">1.6</td>
+<td>male</td>
+<td style="text-align:right">88</td>
+<td style="text-align:right">72.800000</td>
+<td style="text-align:right">15.200000</td>
+<td style="text-align:right">7.288889</td>
+<td style="text-align:right">74.257778</td>
+<td style="text-align:right">13.742222</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Brunei</td>
+<td style="text-align:right">1.6</td>
+<td>female</td>
+<td style="text-align:right">76</td>
+<td style="text-align:right">69.533333</td>
+<td style="text-align:right">6.466667</td>
+<td style="text-align:right">7.288889</td>
+<td style="text-align:right">70.991111</td>
+<td style="text-align:right">5.008889</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Candy</td>
+<td style="text-align:right">1.5</td>
+<td>female</td>
+<td style="text-align:right">56</td>
+<td style="text-align:right">69.533333</td>
+<td style="text-align:right">-13.533333</td>
+<td style="text-align:right">-7.288889</td>
+<td style="text-align:right">68.075556</td>
+<td style="text-align:right">-12.075556</td>
+</tr>
+<tr>
+<td>3</td>
+<td>David</td>
+<td style="text-align:right">1.8</td>
+<td>male</td>
+<td style="text-align:right">73</td>
+<td style="text-align:right">72.800000</td>
+<td style="text-align:right">0.200000</td>
+<td style="text-align:right">7.288889</td>
+<td style="text-align:right">74.257778</td>
+<td style="text-align:right">-1.257778</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Eric</td>
+<td style="text-align:right">1.5</td>
+<td>male</td>
+<td style="text-align:right">77</td>
+<td style="text-align:right">72.800000</td>
+<td style="text-align:right">4.200000</td>
+<td style="text-align:right">-7.288889</td>
+<td style="text-align:right">71.342222</td>
+<td style="text-align:right">5.657778</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Felicity</td>
+<td style="text-align:right">1.4</td>
+<td>female</td>
+<td style="text-align:right">57</td>
+<td style="text-align:right">69.533333</td>
+<td style="text-align:right">-12.533333</td>
+<td style="text-align:right">-7.288889</td>
+<td style="text-align:right">68.075556</td>
+<td style="text-align:right">-11.075556</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>In iteration 1, we firstly train a tree using residuals_1. This tree tells us height is also important in determining weight. Whose who are less than 1.55 meters are supported to lose -7.289 and the other to gain 7.289. Again, we want to shrink this to 20%, which is -1.4578 and 1.4578. We then make prediction_2 based on prediction_1 and <script type="math/tex">\gamma</script>. We see Alex gains 1.4578 kg because he is 1.6. Other also gain or lose weight because of the new rule.</p>
+<h3 id="Iteration-2"><a href="#Iteration-2" class="headerlink" title="Iteration 2"></a>Iteration 2</h3><p><img src="/images/gradient_boosting_regression/tree2.png" alt="Iteration 2"></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:right"></th>
+<th>name</th>
+<th style="text-align:right">height</th>
+<th>gender</th>
+<th style="text-align:right">weight</th>
+<th style="text-align:right">𝑓2</th>
+<th style="text-align:right">𝑟2</th>
+<th style="text-align:right">𝛾3</th>
+<th style="text-align:right">𝑓3</th>
+<th style="text-align:right">𝑟3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">0</td>
+<td>Alex</td>
+<td style="text-align:right">1.6</td>
+<td>male</td>
+<td style="text-align:right">88</td>
+<td style="text-align:right">74.257778</td>
+<td style="text-align:right">13.742222</td>
+<td style="text-align:right">6.047407</td>
+<td style="text-align:right">75.467259</td>
+<td style="text-align:right">12.532741</td>
+</tr>
+<tr>
+<td style="text-align:right">1</td>
+<td>Brunei</td>
+<td style="text-align:right">1.6</td>
+<td>female</td>
+<td style="text-align:right">76</td>
+<td style="text-align:right">70.991111</td>
+<td style="text-align:right">5.008889</td>
+<td style="text-align:right">-6.047407</td>
+<td style="text-align:right">69.781630</td>
+<td style="text-align:right">6.218370</td>
+</tr>
+<tr>
+<td style="text-align:right">2</td>
+<td>Candy</td>
+<td style="text-align:right">1.5</td>
+<td>female</td>
+<td style="text-align:right">56</td>
+<td style="text-align:right">68.075556</td>
+<td style="text-align:right">-12.075556</td>
+<td style="text-align:right">-6.047407</td>
+<td style="text-align:right">66.866074</td>
+<td style="text-align:right">-10.866074</td>
+</tr>
+<tr>
+<td style="text-align:right">3</td>
+<td>David</td>
+<td style="text-align:right">1.8</td>
+<td>male</td>
+<td style="text-align:right">73</td>
+<td style="text-align:right">74.257778</td>
+<td style="text-align:right">-1.257778</td>
+<td style="text-align:right">6.047407</td>
+<td style="text-align:right">75.467259</td>
+<td style="text-align:right">-2.467259</td>
+</tr>
+<tr>
+<td style="text-align:right">4</td>
+<td>Eric</td>
+<td style="text-align:right">1.5</td>
+<td>male</td>
+<td style="text-align:right">77</td>
+<td style="text-align:right">71.342222</td>
+<td style="text-align:right">5.657778</td>
+<td style="text-align:right">6.047407</td>
+<td style="text-align:right">72.551704</td>
+<td style="text-align:right">4.448296</td>
+</tr>
+<tr>
+<td style="text-align:right">5</td>
+<td>Felicity</td>
+<td style="text-align:right">1.4</td>
+<td>female</td>
+<td style="text-align:right">57</td>
+<td style="text-align:right">68.075556</td>
+<td style="text-align:right">-11.075556</td>
+<td style="text-align:right">-6.047407</td>
+<td style="text-align:right">66.866074</td>
+<td style="text-align:right">-9.866074</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Iteration 2 again tells us that gender matters.</p>
+<h3 id="Iteration-3"><a href="#Iteration-3" class="headerlink" title="Iteration 3"></a>Iteration 3</h3><p><img src="/images/gradient_boosting_regression/tree3.png" alt="Iteration 3"></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>name</th>
+<th style="text-align:right">height</th>
+<th>gender</th>
+<th style="text-align:right">weight</th>
+<th style="text-align:right">𝑓3</th>
+<th style="text-align:right">𝑟3</th>
+<th style="text-align:right">𝛾4</th>
+<th style="text-align:right">𝑓4</th>
+<th style="text-align:right">𝑟4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Alex</td>
+<td style="text-align:right">1.6</td>
+<td>male</td>
+<td style="text-align:right">88</td>
+<td style="text-align:right">75.467259</td>
+<td style="text-align:right">12.532741</td>
+<td style="text-align:right">5.427951</td>
+<td style="text-align:right">76.552849</td>
+<td style="text-align:right">11.447151</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Brunei</td>
+<td style="text-align:right">1.6</td>
+<td>female</td>
+<td style="text-align:right">76</td>
+<td style="text-align:right">69.781630</td>
+<td style="text-align:right">6.218370</td>
+<td style="text-align:right">5.427951</td>
+<td style="text-align:right">70.867220</td>
+<td style="text-align:right">5.132780</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Candy</td>
+<td style="text-align:right">1.5</td>
+<td>female</td>
+<td style="text-align:right">56</td>
+<td style="text-align:right">66.866074</td>
+<td style="text-align:right">-10.866074</td>
+<td style="text-align:right">-5.427951</td>
+<td style="text-align:right">65.780484</td>
+<td style="text-align:right">-9.780484</td>
+</tr>
+<tr>
+<td>3</td>
+<td>David</td>
+<td style="text-align:right">1.8</td>
+<td>male</td>
+<td style="text-align:right">73</td>
+<td style="text-align:right">75.467259</td>
+<td style="text-align:right">-2.467259</td>
+<td style="text-align:right">5.427951</td>
+<td style="text-align:right">76.552849</td>
+<td style="text-align:right">-3.552849</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Eric</td>
+<td style="text-align:right">1.5</td>
+<td>male</td>
+<td style="text-align:right">77</td>
+<td style="text-align:right">72.551704</td>
+<td style="text-align:right">4.448296</td>
+<td style="text-align:right">-5.427951</td>
+<td style="text-align:right">71.466114</td>
+<td style="text-align:right">5.533886</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Felicity</td>
+<td style="text-align:right">1.4</td>
+<td>female</td>
+<td style="text-align:right">57</td>
+<td style="text-align:right">66.866074</td>
+<td style="text-align:right">-9.866074</td>
+<td style="text-align:right">-5.427951</td>
+<td style="text-align:right">65.780484</td>
+<td style="text-align:right">-8.780484</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Iteration 3 argues that height is important, too.</p>
+<h3 id="Iteration-4"><a href="#Iteration-4" class="headerlink" title="Iteration 4"></a>Iteration 4</h3><p><img src="/images/gradient_boosting_regression/tree4.png" alt="Iteration 4"></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>name</th>
+<th style="text-align:right">height</th>
+<th>gender</th>
+<th style="text-align:right">weight</th>
+<th style="text-align:right">𝑓4</th>
+<th style="text-align:right">𝑟4</th>
+<th style="text-align:right">𝛾5</th>
+<th style="text-align:right">𝑓5</th>
+<th style="text-align:right">𝑟5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Alex</td>
+<td style="text-align:right">1.6</td>
+<td>male</td>
+<td style="text-align:right">88</td>
+<td style="text-align:right">76.552849</td>
+<td style="text-align:right">11.447151</td>
+<td style="text-align:right">4.476063</td>
+<td style="text-align:right">77.448062</td>
+<td style="text-align:right">10.551938</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Brunei</td>
+<td style="text-align:right">1.6</td>
+<td>female</td>
+<td style="text-align:right">76</td>
+<td style="text-align:right">70.867220</td>
+<td style="text-align:right">5.132780</td>
+<td style="text-align:right">-4.476063</td>
+<td style="text-align:right">69.972007</td>
+<td style="text-align:right">6.027993</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Candy</td>
+<td style="text-align:right">1.5</td>
+<td>female</td>
+<td style="text-align:right">56</td>
+<td style="text-align:right">65.780484</td>
+<td style="text-align:right">-9.780484</td>
+<td style="text-align:right">-4.476063</td>
+<td style="text-align:right">64.885271</td>
+<td style="text-align:right">-8.885271</td>
+</tr>
+<tr>
+<td>3</td>
+<td>David</td>
+<td style="text-align:right">1.8</td>
+<td>male</td>
+<td style="text-align:right">73</td>
+<td style="text-align:right">76.552849</td>
+<td style="text-align:right">-3.552849</td>
+<td style="text-align:right">4.476063</td>
+<td style="text-align:right">77.448062</td>
+<td style="text-align:right">-4.448062</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Eric</td>
+<td style="text-align:right">1.5</td>
+<td>male</td>
+<td style="text-align:right">77</td>
+<td style="text-align:right">71.466114</td>
+<td style="text-align:right">5.533886</td>
+<td style="text-align:right">4.476063</td>
+<td style="text-align:right">72.361326</td>
+<td style="text-align:right">4.638674</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Felicity</td>
+<td style="text-align:right">1.4</td>
+<td>female</td>
+<td style="text-align:right">57</td>
+<td style="text-align:right">65.780484</td>
+<td style="text-align:right">-8.780484</td>
+<td style="text-align:right">-4.476063</td>
+<td style="text-align:right">64.885271</td>
+<td style="text-align:right">-7.885271</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Let’s stop at Iteration 4. And take a look at the loss.</p>
+<p><img src="/images/gradient_boosting_regression/loss.png" alt="Iteration 4"></p>
+<p>Hope you get the idea.</p>
+<p>The code is hosted at my github repo:</p>
+<p><a href="https://github.com/EricWebsmith/machine_learning_from_scrach/blob/master/Gradiant_Boosting_Regression.ipynb" target="_blank" rel="noopener">https://github.com/EricWebsmith/machine_learning_from_scrach/blob/master/Gradiant_Boosting_Regression.ipynb</a></p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference:"></a>Reference:</h1><p><a href="https://en.wikipedia.org/wiki/Gradient_boosting" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Gradient_boosting</a></p>
+<p><a href="https://www.youtube.com/watch?v=3CC4N4z3GJc&amp;list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF&amp;index=44" target="_blank" rel="noopener">https://www.youtube.com/watch?v=3CC4N4z3GJc&amp;list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF&amp;index=44</a>    </p>
+<p><a href="https://www.youtube.com/watch?v=2xudPOBz-vs&amp;list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF&amp;index=45" target="_blank" rel="noopener">https://www.youtube.com/watch?v=2xudPOBz-vs&amp;list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF&amp;index=45</a></p>
+<p>This article is based on this video.</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>Author：<a href="https://EricWebsmith.github.io">Eric Websmith</a>
+            <p>Url: <a href="https://ericwebsmith.github.io/2020/04/12/GradientBoostingRegression/">https://ericwebsmith.github.io/2020/04/12/GradientBoostingRegression/</a>
+            <p>Publish Date: <a href="https://ericwebsmith.github.io/2020/04/12/GradientBoostingRegression/">April 12th 2020, 2:44:42 pm</a>
+            <p>Updated Date: <a href="https://ericwebsmith.github.io/2020/04/12/GradientBoostingRegression/">April 12th 2020, 4:45:22 pm</a>
+            <p>License: We use <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">creativecommons 4.0 </a>license</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2020/04/11/BayesianOptimization/" title= "Bayesian Optimization">
+                    <div class="prevTitle">Bayesian Optimization</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- comments -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- gitalk评论 -->
+
+    <!-- utteranc评论 -->
+
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:eric_uea@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/EricWebsmith" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#The-algorithm"><span class="toc-number">1.</span> <span class="toc-text">The algorithm</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Optional-From-Gradient-Boosting-to-Gradient-Boosting-Regression"><span class="toc-number">2.</span> <span class="toc-text">(Optional) From Gradient Boosting to Gradient Boosting Regression</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Code"><span class="toc-number">3.</span> <span class="toc-text">Code</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-1-Average"><span class="toc-number">3.1.</span> <span class="toc-text">Step 1 Average</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-2-For-Loop"><span class="toc-number">3.2.</span> <span class="toc-text">Step 2 For Loop</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Iteration-0"><span class="toc-number">3.2.1.</span> <span class="toc-text">Iteration 0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Iteration-1"><span class="toc-number">3.2.2.</span> <span class="toc-text">Iteration 1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Iteration-2"><span class="toc-number">3.2.3.</span> <span class="toc-text">Iteration 2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Iteration-3"><span class="toc-number">3.2.4.</span> <span class="toc-text">Iteration 3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Iteration-4"><span class="toc-number">3.2.5.</span> <span class="toc-text">Iteration 4</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference:</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 3
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span><a class="archive-post-title" href= "/2020/04/12/GradientBoostingRegression/" >Gradient Boosting Regression from Scratch</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/11</span><a class="archive-post-title" href= "/2020/04/11/BayesianOptimization/" >Bayesian Optimization</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/04</span><a class="archive-post-title" href= "/2020/04/04/automl/" >AutoML Introduction</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="gradient boosting"><span class="iconfont-archer">&#xe606;</span>gradient boosting</span>
+    
+        <span class="sidebar-tag-name" data-tags="AutoML"><span class="iconfont-archer">&#xe606;</span>AutoML</span>
+    
+        <span class="sidebar-tag-name" data-tags="Deep Learning"><span class="iconfont-archer">&#xe606;</span>Deep Learning</span>
+    
+        <span class="sidebar-tag-name" data-tags="Optimization"><span class="iconfont-archer">&#xe606;</span>Optimization</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Eric Websmith"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>
+
+

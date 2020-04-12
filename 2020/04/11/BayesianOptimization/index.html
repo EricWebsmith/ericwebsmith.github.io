@@ -11,7 +11,7 @@
 
 
 <head>
-    <meta charset="utf-8">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
     <meta name="author" content="Eric Websmith">
     <meta name="renderer" content="webkit">
@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://ericwebsmith.github.io/images/automl/bayesian_optimization_iteration_2.png">
 <meta property="og:image" content="https://ericwebsmith.github.io/images/automl/bayesian_optimization_iteration_3.png">
 <meta property="article:published_time" content="2020-04-11T02:59:48.000Z">
-<meta property="article:modified_time" content="2020-04-11T05:58:15.417Z">
+<meta property="article:modified_time" content="2020-04-12T06:52:45.484Z">
 <meta property="article:author" content="Eric Websmith">
 <meta property="article:tag" content="AutoML">
 <meta property="article:tag" content="Optimization">
@@ -221,13 +221,13 @@
     
     <!-- 谷歌统计  -->
     
-<meta name="generator" content="Hexo 4.2.0"></head>
+<meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 
     
         <body class="post-body">
     
     
-<header class="header">
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
@@ -460,25 +460,12 @@ height:50vh;
 </ol>
 <h1 id="Python-Code"><a href="#Python-Code" class="headerlink" title="Python Code"></a>Python Code</h1><p>Let’s first define and plot the objective function as following:</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">objective</span><span class="params">(x)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> ((x<span class="number">-0.47</span>)**<span class="number">2</span> * math.sin(<span class="number">3</span> * x))</span><br></pre></td></tr></table></figure>
-
-
-
-
-
 <p><img src="/images/automl/objective.png" alt="Objective"></p>
 <p>Here the maximum (x=0.87, y= 0.0811051) is also plotted as a blue point.</p>
 <p>Now, this function is non-convex, thus gradient descent cannot be used. We use BO. The surrogate function is the Gaussian process regressor and UCB is used as the acquisition function.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#uppper confidence bound (UCB)</span></span><br><span class="line"><span class="comment">#beta = 1</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">acquisition</span><span class="params">(mean, std)</span>:</span></span><br><span class="line">    mean=mean.flatten()</span><br><span class="line"></span><br><span class="line">    <span class="comment">#UCB</span></span><br><span class="line">    upper=mean+std</span><br><span class="line">    <span class="comment">#argmax</span></span><br><span class="line">    max_at=np.argmax(upper)</span><br><span class="line">    <span class="keyword">return</span> X[max_at]</span><br><span class="line"></span><br><span class="line"><span class="comment">#surrogate</span></span><br><span class="line">surrogate = GaussianProcessRegressor()</span><br></pre></td></tr></table></figure>
-
-
-
-
-
 <p>Code for the whole process</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#step 0 Initiate x with the min and max of the search space.</span></span><br><span class="line">xsamples=np.array([[<span class="number">0</span>],[<span class="number">1</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment">#step 1 Calculate y using x and objective function.</span></span><br><span class="line">ysamples=np.array([objective(x) <span class="keyword">for</span> x <span class="keyword">in</span> xsamples])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">4</span>):</span><br><span class="line">    <span class="comment">#step 2 Fit the surrogate function.</span></span><br><span class="line">    surrogate.fit(xsamples, ysamples)</span><br><span class="line">    mean, std=surrogate.predict(X, return_std=<span class="literal">True</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#step 3 Find new x using acquisition function.</span></span><br><span class="line">    new_x=acquisition(mean, std)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#step 4 Go to 1</span></span><br><span class="line">    new_y=objective(new_x)</span><br><span class="line"></span><br><span class="line">    <span class="comment">#plot</span></span><br><span class="line">    plot(X, y, xsamples, ysamples, mean, std, new_x, new_y, i)</span><br><span class="line">    xsamples=np.vstack((xsamples, new_x))</span><br><span class="line">    ysamples=np.vstack((ysamples, new_y))</span><br></pre></td></tr></table></figure>
-
-
-
 <p>Step 0:</p>
 <p>In step 0, we simply produce two sample x=0 and x=1. </p>
 <p>Iteration 0:</p>
@@ -495,7 +482,6 @@ height:50vh;
 <p><a href="https://github.com/EricWebsmith/machine_learning_from_scrach/blob/master/bayesian_optimization.ipynb" target="_blank" rel="noopener">https://github.com/EricWebsmith/machine_learning_from_scrach/blob/master/bayesian_optimization.ipynb</a></p>
 <h1 id="Bayesian-Optimization-not-from-scratch"><a href="#Bayesian-Optimization-not-from-scratch" class="headerlink" title="Bayesian Optimization not from scratch"></a>Bayesian Optimization not from scratch</h1><p>There are many tools for BO. One of them is Hyperopt. The following is just a simple demonstration of that.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> hyperopt <span class="keyword">import</span> fmin, tpe, hp</span><br><span class="line">best = fmin(</span><br><span class="line">    fn=<span class="keyword">lambda</span> x:-objective(x),</span><br><span class="line">    space=hp.uniform(<span class="string">'x'</span>, <span class="number">0</span>, <span class="number">1</span>),</span><br><span class="line">    algo=tpe.suggest,</span><br><span class="line">    max_evals=<span class="number">100</span>)</span><br><span class="line">print(best)</span><br></pre></td></tr></table></figure>
-
 <h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="https://en.wikipedia.org/wiki/Bayesian_optimization" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Bayesian_optimization</a></p>
 
     </article>
@@ -505,13 +491,18 @@ height:50vh;
             <p>Author：<a href="https://EricWebsmith.github.io">Eric Websmith</a>
             <p>Url: <a href="https://ericwebsmith.github.io/2020/04/11/BayesianOptimization/">https://ericwebsmith.github.io/2020/04/11/BayesianOptimization/</a>
             <p>Publish Date: <a href="https://ericwebsmith.github.io/2020/04/11/BayesianOptimization/">April 11th 2020, 10:59:48 am</a>
-            <p>Updated Date: <a href="https://ericwebsmith.github.io/2020/04/11/BayesianOptimization/">April 11th 2020, 1:58:15 pm</a>
+            <p>Updated Date: <a href="https://ericwebsmith.github.io/2020/04/11/BayesianOptimization/">April 12th 2020, 2:52:45 pm</a>
             <p>License: We use <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">creativecommons 4.0 </a>license</p>
         </div>
     
     <!-- paginator  -->
     <ul class="post-paginator">
         <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2020/04/12/GradientBoostingRegression/" title= "Gradient Boosting Regression from Scratch">
+                    <div class="nextTitle">Gradient Boosting Regression from Scratch</div>
+                </a>
             
         </li>
         <li class="previous">
@@ -665,9 +656,18 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 2
+        Total : 3
         </div>
         <!-- search  -->
         
@@ -683,6 +683,11 @@ top:50vh;
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span><a class="archive-post-title" href= "/2020/04/12/GradientBoostingRegression/" >Gradient Boosting Regression from Scratch</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">04/11</span><a class="archive-post-title" href= "/2020/04/11/BayesianOptimization/" >Bayesian Optimization</a>
         </li>
     
@@ -695,6 +700,8 @@ top:50vh;
   </div>
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="gradient boosting"><span class="iconfont-archer">&#xe606;</span>gradient boosting</span>
     
         <span class="sidebar-tag-name" data-tags="AutoML"><span class="iconfont-archer">&#xe606;</span>AutoML</span>
     
@@ -770,7 +777,23 @@ jsonContent:
     
         <script src="/scripts/share.js" async></script>    
      
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
 </html>
 
 

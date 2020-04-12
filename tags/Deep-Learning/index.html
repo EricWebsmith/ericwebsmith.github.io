@@ -490,9 +490,18 @@ AutoML in both classic and deep machine ...
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 2
+        Total : 3
         </div>
         <!-- search  -->
         
@@ -508,6 +517,11 @@ AutoML in both classic and deep machine ...
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span><a class="archive-post-title" href= "/2020/04/12/GradientBoostingRegression/" >Gradient Boosting Regression from Scratch</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">04/11</span><a class="archive-post-title" href= "/2020/04/11/BayesianOptimization/" >Bayesian Optimization</a>
         </li>
     
@@ -520,6 +534,8 @@ AutoML in both classic and deep machine ...
   </div>
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="gradient boosting"><span class="iconfont-archer">&#xe606;</span>gradient boosting</span>
     
         <span class="sidebar-tag-name" data-tags="AutoML"><span class="iconfont-archer">&#xe606;</span>AutoML</span>
     
@@ -593,7 +609,23 @@ jsonContent:
     </div>
     <!-- async load share.js -->
      
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+</body>
 </html>
 
 

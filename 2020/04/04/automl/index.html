@@ -11,7 +11,7 @@
 
 
 <head>
-    <meta charset="utf-8">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
     <meta name="author" content="Eric Websmith">
     <meta name="renderer" content="webkit">
@@ -233,13 +233,13 @@
     
     <!-- 谷歌统计  -->
     
-<meta name="generator" content="Hexo 4.2.0"></head>
+<meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 
     
         <body class="post-body">
     
     
-<header class="header">
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
@@ -475,9 +475,6 @@ height:50vh;
 <p>Auto-Sklearn focuses on the CASH problem. it does not handle data preprocessing. I have to remove string features like names and tickets in advance. Categorical features like embarking place, gender have to be transformed into Boolean values or one-hot values.</p>
 <p>Sample code for auto-sklearn</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> autosklearn.classification</span><br><span class="line">cls = autosklearn.classification.AutoSklearnClassifier()</span><br><span class="line">cls.fit(X_train, y_train)</span><br><span class="line">predictions = cls.predict(X_test)</span><br></pre></td></tr></table></figure>
-
-
-
 <p>Official Website: <a href="https://automl.github.io/auto-sklearn/master/" target="_blank" rel="noopener">https://automl.github.io/auto-sklearn/master/</a></p>
 <h1 id="Deep-Learning-in-AutoML"><a href="#Deep-Learning-in-AutoML" class="headerlink" title="Deep Learning in AutoML"></a>Deep Learning in AutoML</h1><h2 id="Neural-Architecture-Search"><a href="#Neural-Architecture-Search" class="headerlink" title="Neural Architecture Search"></a>Neural Architecture Search</h2><p>Neural Architecture Search (NAS) is the main research topic in deep learning automation. The rough idea is to treat deep models as strings such that the next layer can be predicted by RNN. NAS named this RNN the <strong>controller</strong>. The original NAS used  reinforcement learning to optimize the parameters.</p>
 <p><img src="/images/automl/nas.png" alt="Neural Architecture Search"></p>
@@ -506,9 +503,6 @@ height:50vh;
 <h2 id="Auto-Keras"><a href="#Auto-Keras" class="headerlink" title="Auto-Keras"></a>Auto-Keras</h2><p>Auto-Keras is an opensource based on Keras. It uses Bayesian optimization and network morphism. It trains CNN, RNN and traditional DNN.</p>
 <p>Sample code:</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> autokeras <span class="keyword">as</span> ak</span><br><span class="line"></span><br><span class="line">clf = ak.ImageClassifier()</span><br><span class="line">clf.fit(x_train, y_train)</span><br><span class="line">results = clf.predict(x_test)</span><br></pre></td></tr></table></figure>
-
-
-
 <p>The official website:</p>
 <p><a href="https://autokeras.com/" target="_blank" rel="noopener">https://autokeras.com/</a></p>
 <h1 id="Where-to-use-AutoML"><a href="#Where-to-use-AutoML" class="headerlink" title="Where to use AutoML?"></a>Where to use AutoML?</h1><p>AutoML is suitable in some mature scenarios, like traditional ML, image recognition, object detection, OCR, text analysis, etc.. The reason is that we have limit options. </p>
@@ -687,9 +681,18 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 2
+        Total : 3
         </div>
         <!-- search  -->
         
@@ -705,6 +708,11 @@ top:50vh;
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span><a class="archive-post-title" href= "/2020/04/12/GradientBoostingRegression/" >Gradient Boosting Regression from Scratch</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">04/11</span><a class="archive-post-title" href= "/2020/04/11/BayesianOptimization/" >Bayesian Optimization</a>
         </li>
     
@@ -717,6 +725,8 @@ top:50vh;
   </div>
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="gradient boosting"><span class="iconfont-archer">&#xe606;</span>gradient boosting</span>
     
         <span class="sidebar-tag-name" data-tags="AutoML"><span class="iconfont-archer">&#xe606;</span>AutoML</span>
     
@@ -792,7 +802,23 @@ jsonContent:
     
         <script src="/scripts/share.js" async></script>    
      
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
 </html>
 
 
