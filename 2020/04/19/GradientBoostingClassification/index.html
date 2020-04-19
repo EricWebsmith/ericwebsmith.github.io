@@ -20,19 +20,27 @@
     <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
     <meta name="description" content="">
-    <meta name="description" content="Gradiant Boosting ClassificationThe Gradient Boosting (GB) algorithm trains a series of weak learners and each focuses on the errors the previous learners have made and tries to improve it. Together,">
+    <meta name="description" content="The Gradient Boosting (GB) algorithm trains a series of weak learners and each focuses on the errors the previous learners have made and tries to improve it. Together, they make a better prediction. A">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Gradient Boosting Classification from Scratch">
 <meta property="og:url" content="https://ericwebsmith.github.io/2020/04/19/GradientBoostingClassification/index.html">
 <meta property="og:site_name" content="Eric Websmith&#39;s Blog">
-<meta property="og:description" content="Gradiant Boosting ClassificationThe Gradient Boosting (GB) algorithm trains a series of weak learners and each focuses on the errors the previous learners have made and tries to improve it. Together,">
+<meta property="og:description" content="The Gradient Boosting (GB) algorithm trains a series of weak learners and each focuses on the errors the previous learners have made and tries to improve it. Together, they make a better prediction. A">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_classification/gradient_boosting_classification.png">
+<meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_classification/tree0.svg">
+<meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_classification/tree1.svg">
+<meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_classification/tree2.svg">
+<meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_classification/score.png">
+<meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_classification/loss.png">
 <meta property="article:published_time" content="2020-04-19T09:44:42.000Z">
-<meta property="article:modified_time" content="2020-04-19T09:10:43.495Z">
+<meta property="article:modified_time" content="2020-04-19T10:29:00.317Z">
 <meta property="article:author" content="Eric Websmith">
 <meta property="article:tag" content="Gradient Boosting">
-<meta property="article:tag" content="Regression">
+<meta property="article:tag" content="Boosting">
+<meta property="article:tag" content="Classification">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ericwebsmith.github.io/images/gradient_boosting_classification/gradient_boosting_classification.png">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     
@@ -282,13 +290,15 @@ height:50vh;
     
         <a class="post-tag" href="javascript:void(0);" data-tags = "Gradient Boosting">Gradient Boosting</a>
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Regression">Regression</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Boosting">Boosting</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Classification">Classification</a>
     
 </div>
                 
                 
                     <div class="post-intro-read">
-                        <span>Word count: <span class="post-count word-count">1.2k</span>Reading time: <span class="post-count reading-time">7 min</span></span>
+                        <span>Word count: <span class="post-count word-count">2.8k</span>Reading time: <span class="post-count reading-time">17 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -417,7 +427,7 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <h1 id="Gradiant-Boosting-Classification"><a href="#Gradiant-Boosting-Classification" class="headerlink" title="Gradiant Boosting Classification"></a>Gradiant Boosting Classification</h1><p>The Gradient Boosting (GB) algorithm trains a series of weak learners and each focuses on the errors the previous learners have made and tries to improve it. Together, they make a better prediction.</p>
+        <p>The Gradient Boosting (GB) algorithm trains a series of weak learners and each focuses on the errors the previous learners have made and tries to improve it. Together, they make a better prediction.</p>
 <p>According to Wikipedia, Gradient boosting is a machine learning technique for regression and classification problems, which produces a prediction model in the form of an ensemble of weak prediction models, typically decision trees. It builds the model in a stage-wise fashion as other boosting methods do, and it generalizes them by allowing optimization of an arbitrary differentiable loss function. </p>
 <p>Prerequisite</p>
 <pre><code>1. Linear regression and gradient descent
@@ -427,7 +437,45 @@ height:50vh;
 <pre><code>1. Explain gradient boosting algorithm.
 2. Explain gradient boosting classification algorithm.
 3. Write a gradient boosting classification from scratch
-</code></pre><h1 id="Optional-From-Gradient-Boosting-to-Gradient-Boosting-Regression"><a href="#Optional-From-Gradient-Boosting-to-Gradient-Boosting-Regression" class="headerlink" title="(Optional) From Gradient Boosting to Gradient Boosting Regression"></a>(Optional) From Gradient Boosting to Gradient Boosting Regression</h1><p>The above knowledge is enough for writing BGR code from scratch. But I want to explain more about gradient boosting. GB is a meta-algorithm that can be applied to both regression and classification. The above one is only a specific form for regression. In the following, I will introduce the general gradient boosting algorithm and deduce GBR from GB.</p>
+</code></pre><h1 id="The-algorithm"><a href="#The-algorithm" class="headerlink" title="The algorithm"></a>The algorithm</h1><p>The following plot illustrates the algorithm.</p>
+<p><img src="/images/gradient_boosting_classification/gradient_boosting_classification.png" alt="Gradient Boosting Regression"></p>
+<p>(Picture taken from Youtube channel StatQuest)</p>
+<p>From the plot above, the first part is a stump, which is the log of odds of <strong>y</strong>. We then add several trees to it. In the following trees, the target is not y. Instead, the target is the residual or the true value subtracts the previous prediction.</p>
+<script type="math/tex; mode=display">residual=true\_value - previous\_prediction</script><p>That is why we say in Gradient Boosting trains a series of weak learners, each focuses on the errors of the previous one. The residual predictions are multiplied by the learning rate (0.1 here) before added to the average.</p>
+<p>Here the picture looks more complicated than the one on regression. The purple ones are log of odds (<strong>l</strong>). The green ones are probabilities. We firstly calculate log of odds of <strong>y</strong>, instead of average. We then calculate probabilities using log of odds. We build a regression tree. The leaves are colored green. The leaves have residuals. We use the probability residuals to produce log-of-odds residuals or $\gamma$. $\gamma$ is then used to update <strong>l</strong>. This continues until we are satisfied with the results or we are running out of iterations.</p>
+<hr>
+<p><strong>The Steps</strong></p>
+<p>Step 1: Calculate the log of odds of y. This is also the first estimation of y. Here $n_1$ is the number of true values and $n_0$ of false values.</p>
+<script type="math/tex; mode=display">l_0(x)=\log \frac{n_1}{n_0}</script><p>For each $x_i$, the probability is:</p>
+<script type="math/tex; mode=display">
+p_{0i}=\frac{e^{l_{0i}}}{1+e^{l_{0i}}}</script><p>The prediction is:</p>
+<script type="math/tex; mode=display">
+f_{0i}=\begin{cases}
+0 & p_{0i}<0.5 \\
+1 & p_{0i}>=0.5
+\end{cases}</script><p>Step 2 for m in 1 to M: <br /></p>
+<ul>
+<li>Step 2.1: Compute so-call pseudo-residuals:<script type="math/tex; mode=display">r_{im}=f_i-p_i</script></li>
+<li><p>Step 2.2: Fit a regression tree $t<em>m(x)$ to pseudo-residuals and create terminal regions (leaves) $R</em>{jm}$ for $j=1…Jm$ <br /></p>
+</li>
+<li><p>Step 2.3: For each leaf of the tree, there are $p_j$ elements, compute $\gamma$ as following equation. <br /></p>
+</li>
+</ul>
+<script type="math/tex; mode=display">\gamma_{im}=\frac{\sum r_{im}}{\sum (1-r_{im-1})(r_{im-1})}</script><ul>
+<li><p>(In practise, the regression tree will do this for us.)</p>
+</li>
+<li><p>Step 2.4: Update the log of odds with learning rate $\alpha$:</p>
+<script type="math/tex; mode=display">l_m(x)=l_{m-1}+\alpha \gamma_m</script></li>
+</ul>
+<p>For each $x_i$, the probability is:</p>
+<script type="math/tex; mode=display">p_{mi}=\frac{e^{l_{mi}}}{1+e^{l_{mi}}}</script><p>The prediction is:</p>
+<script type="math/tex; mode=display">
+f_{mi}=\begin{cases}
+0 & p_{mi}<0.5 \\
+1 & p_{mi}>=0.5
+\end{cases}</script><p>Step 3. Output <script type="math/tex">f_M(x)</script></p>
+<hr>
+<h1 id="Optional-From-Gradient-Boosting-to-Gradient-Boosting-Regression"><a href="#Optional-From-Gradient-Boosting-to-Gradient-Boosting-Regression" class="headerlink" title="(Optional) From Gradient Boosting to Gradient Boosting Regression"></a>(Optional) From Gradient Boosting to Gradient Boosting Regression</h1><p>The above knowledge is enough for writing BGR code from scratch. But I want to explain more about gradient boosting. GB is a meta-algorithm that can be applied to both regression and classification. The above one is only a specific form for regression. In the following, I will introduce the general gradient boosting algorithm and deduce GBR from GB.</p>
 <p>Let’s first look at the GB steps</p>
 <hr>
 <p><strong>The Steps</strong></p>
@@ -437,7 +485,7 @@ height:50vh;
 <script type="math/tex; mode=display">F_0(x)=\underset{\gamma}{\operatorname{argmin}}\sum_{i=1}^{n}L(y_i, \gamma)</script><p>Step 2 for m in 1 to M: <br /></p>
 <ul>
 <li>Step 2.1: Compute so-call pseudo-residuals:<script type="math/tex; mode=display">r_{im}=-[\frac{\partial L(y_i, F(x_i))}{\partial F(x_i)}], {F(x)=F_{m-1}(x)}</script></li>
-<li><p>Step 2.2: Fit a weak learner $h<em>m(x)$ to pseudo-residuals. and create terminal regions $R</em>{jm}$, for $j=1…J_m$<br /></p>
+<li><p>Step 2.2: Fit a weak learner <script type="math/tex">h_m(x)</script> to pseudo-residuals. and create terminal regions <script type="math/tex">R_{jm}</script>, for <script type="math/tex">j=1...J_m</script><br /></p>
 </li>
 <li><p>Step 2.3: For each leaf of the tree, compute $\gamma$ as the following equation. Here $\hat{r}$ is the predicted residual produced by $h_m(x)$.<br /></p>
 <script type="math/tex; mode=display">\gamma_{jm}=\underset{\gamma}{\operatorname{argmin}}\sum_{x_i \in R_{jm}}^{n}L(y_i, F_{m-1}(x_i)+\gamma)</script></li>
@@ -446,8 +494,8 @@ height:50vh;
 </ul>
 <p>Step 3. Output <script type="math/tex">F_M(x)</script></p>
 <p>Lost Function:</p>
-<p>To deduce the GB to GBC, I simply define a loss function and solve the loss function in step 1, 2.1 and 2.3. We Log of Likelihood as the loss function:</p>
-<script type="math/tex; mode=display">L(y, F(x))=-\sum_{i=1}^{N}(y_i* log(p) + (1-y_i)*log(1-p))</script><p>Since this is a function of probability and we need a function of log of odds($l$), let’s focus on the middle part and transform it to a function of $l$.</p>
+<p>To deduce the GB to GBC, I simply define a loss function and solve the loss function in step 1, 2.1 and 2.3. We use Log of Likelihood as the loss function:</p>
+<script type="math/tex; mode=display">L(y, F(x))=-\sum_{i=1}^{N}(y_i* log(p) + (1-y_i)*log(1-p))</script><p>Since this is a function of probability and we need a function of log of odds($l$), let’s focus on the middle part and transform it into a function of $l$.</p>
 <p>The middle part is:</p>
 <script type="math/tex; mode=display">
 -(y*\log(p)+(1-y)*\log(1-p)) \\
@@ -466,7 +514,7 @@ height:50vh;
 -(y*\log(p)+(1-y)*\log(1-p)) \\
 =-y\log(odds)+\log(1+e^{\log(odds)}) \\</script><p>Thus, we will have the loss function over log of odds:</p>
 <script type="math/tex; mode=display">L=-\sum_{i=1}^{N}(y\log(odds)-\log(1+e^{\log(odds)}))</script><p>For Step 1:</p>
-<p>Because SSE is a convex and at the lowest point where the derivative is zero, we have the following:</p>
+<p>Because the lost function is convex and at the lowest point where the derivative is zero, we have the following:</p>
 <script type="math/tex; mode=display">
 \frac{\partial L(y, F_0)}{\partial F_0}  \\
 =-\frac{\partial \sum_{i=1}^{N}(y\log(odds)-\log(1+e^{\log(odds)}))}{\partial log(odds)} \\
@@ -505,7 +553,445 @@ e^l=\frac{p}{1-p} \\
 =\frac{y-p}{e^l+(e^l)^2-+(e^l)^2} \\
 =\frac{y-p}{\frac{e^l}{(1+e^l)^2}} \\
 =\frac{y-p}{p(1-p)}</script><p>Now we have</p>
-<script type="math/tex; mode=display">\gamma = \frac{\sum (y-p)}{\sum p(1-p)}</script>
+<script type="math/tex; mode=display">\gamma = \frac{\sum (y-p)}{\sum p(1-p)}</script><h1 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h1><p>Firstly, let’s define a data table as follows:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>no</th>
+<th>name</th>
+<th>likes_popcorn</th>
+<th>age</th>
+<th>favorite_color</th>
+<th>loves_troll2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Alex</td>
+<td>1</td>
+<td>10</td>
+<td>Blue</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Brunei</td>
+<td>1</td>
+<td>90</td>
+<td>Green</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Candy</td>
+<td>0</td>
+<td>30</td>
+<td>Blue</td>
+<td>0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>David</td>
+<td>1</td>
+<td>30</td>
+<td>Red</td>
+<td>0</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Eric</td>
+<td>0</td>
+<td>30</td>
+<td>Green</td>
+<td>1</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Felicity</td>
+<td>0</td>
+<td>10</td>
+<td>Blue</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Step 1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">log_of_odds0&#x3D;np.log(4 &#x2F; 2)</span><br><span class="line">probability0&#x3D;np.exp(log_of_odds0)&#x2F;(np.exp(log_of_odds0)+1)</span><br><span class="line">print(f&#39;the log_of_odds is : &#123;log_of_odds0&#125;&#39;)</span><br><span class="line">print(f&#39;the probability is : &#123;probability0&#125;&#39;)</span><br><span class="line">predict0&#x3D;1</span><br><span class="line">print(f&#39;the prediction is : 1&#39;)</span><br><span class="line">n_samples&#x3D;6</span><br><span class="line"></span><br><span class="line">loss0&#x3D;-(y*np.log(probability0)+(1-y)*np.log(1-probability0))</span><br></pre></td></tr></table></figure>
+<p>The output is</p>
+<blockquote>
+<p>the log_of_odds is : 0.6931471805599453<br>the probability is : 0.6666666666666666<br>the prediction is : 1</p>
+</blockquote>
+<p>Step 2</p>
+<p>For Step 2, I define a function called iteration, I will call it several times. Each time we go through from Step 2.1 to Step 2.4.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">iteration</span><span class="params">(i)</span>:</span></span><br><span class="line">    <span class="comment">#step 2.1 calculate the residuals</span></span><br><span class="line">    residuals[i] = y - probabilities[i]</span><br><span class="line">    <span class="comment">#step 2.2 Fit a regression tree</span></span><br><span class="line">    dt = DecisionTreeRegressor(max_depth=<span class="number">1</span>, max_leaf_nodes=<span class="number">3</span>)</span><br><span class="line">    dt=dt.fit(X, residuals[i])</span><br><span class="line">    </span><br><span class="line">    trees.append(dt.tree_)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#Step 2.3 Calculate gamma</span></span><br><span class="line">    leaf_indeces=dt.apply(X)</span><br><span class="line">    print(leaf_indeces)</span><br><span class="line">    unique_leaves=np.unique(leaf_indeces)</span><br><span class="line">    n_leaf=len(unique_leaves)</span><br><span class="line">    <span class="comment">#for leaf 1</span></span><br><span class="line">    <span class="keyword">for</span> ileaf <span class="keyword">in</span> range(n_leaf):</span><br><span class="line">        </span><br><span class="line">        leaf_index=unique_leaves[ileaf]</span><br><span class="line">        n_leaf=len(leaf_indeces[leaf_indeces==leaf_index])</span><br><span class="line">        previous_probability = probabilities[i][leaf_indeces==leaf_index]</span><br><span class="line">        denominator = np.sum(previous_probability * (<span class="number">1</span>-previous_probability))</span><br><span class="line">        igamma = dt.tree_.value[ileaf+<span class="number">1</span>][<span class="number">0</span>][<span class="number">0</span>] * n_leaf / denominator</span><br><span class="line">        gamma_value[i][ileaf]=igamma</span><br><span class="line">        print(<span class="string">f'for leaf <span class="subst">&#123;leaf_index&#125;</span>, we have <span class="subst">&#123;n_leaf&#125;</span> related samples. and gamma is <span class="subst">&#123;igamma&#125;</span>'</span>)</span><br><span class="line"></span><br><span class="line">    gamma[i] = [gamma_value[i][np.where(unique_leaves==index)] <span class="keyword">for</span> index <span class="keyword">in</span> leaf_indeces]</span><br><span class="line">    <span class="comment">#Step 2.4 Update F(x) </span></span><br><span class="line">    log_of_odds[i+<span class="number">1</span>] = log_of_odds[i] + learning_rate * gamma[i]</span><br><span class="line"></span><br><span class="line">    probabilities[i+<span class="number">1</span>] = np.array([np.exp(odds)/(np.exp(odds)+<span class="number">1</span>) <span class="keyword">for</span> odds <span class="keyword">in</span> log_of_odds[i+<span class="number">1</span>]])</span><br><span class="line">    predictions[i+<span class="number">1</span>] = (probabilities[i+<span class="number">1</span>]&gt;<span class="number">0.5</span>)*<span class="number">1.0</span></span><br><span class="line">    score[i+<span class="number">1</span>]=np.sum(predictions[i+<span class="number">1</span>]==y) / n_samples</span><br><span class="line">    <span class="comment">#residuals[i+1] = y - probabilities[i+1]</span></span><br><span class="line">    loss[i+<span class="number">1</span>]=np.sum(-y * log_of_odds[i+<span class="number">1</span>] + np.log(<span class="number">1</span>+np.exp(log_of_odds[i+<span class="number">1</span>])))</span><br><span class="line">    </span><br><span class="line">    new_df=df.copy()</span><br><span class="line">    new_df.columns=[<span class="string">'name'</span>, <span class="string">'popcorn'</span>,<span class="string">'age'</span>,<span class="string">'color'</span>,<span class="string">'y'</span>]</span><br><span class="line">    new_df[<span class="string">f'$p_<span class="subst">&#123;i&#125;</span>$'</span>]=probabilities[i]</span><br><span class="line">    new_df[<span class="string">f'$l_<span class="subst">&#123;i&#125;</span>$'</span>]=log_of_odds[i]</span><br><span class="line">    new_df[<span class="string">f'$r_<span class="subst">&#123;i&#125;</span>$'</span>]=residuals[i]</span><br><span class="line">    new_df[<span class="string">f'$\gamma_<span class="subst">&#123;i&#125;</span>$'</span>]=gamma[i]</span><br><span class="line">    new_df[<span class="string">f'$l_<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>$'</span>]=log_of_odds[i+<span class="number">1</span>]</span><br><span class="line">    new_df[<span class="string">f'$p_<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>$'</span>]=probabilities[i+<span class="number">1</span>]</span><br><span class="line">    display(new_df)</span><br><span class="line">    </span><br><span class="line">    dot_data = tree.export_graphviz(dt, out_file=<span class="literal">None</span>, filled=<span class="literal">True</span>, rounded=<span class="literal">True</span>,feature_names=X.columns) </span><br><span class="line">    graph = graphviz.Source(dot_data) </span><br><span class="line">    display(graph)</span><br></pre></td></tr></table></figure>
+<p>Now Let’s call iteration 0</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iteration(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>The output is as follow:</p>
+<blockquote>
+<p>[1 2 2 2 2 1]<br>for leaf 1, we have 2 related samples. and gamma is 1.5<br>for leaf 2, we have 4 related samples. and gamma is -0.7499999999999998</p>
+</blockquote>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>no</th>
+<th>name</th>
+<th>popcorn</th>
+<th style="text-align:right">age</th>
+<th>color</th>
+<th>y</th>
+<th style="text-align:right">𝑝0</th>
+<th style="text-align:right">𝑙0</th>
+<th style="text-align:right">𝑟0</th>
+<th style="text-align:right">𝛾0</th>
+<th style="text-align:right">𝑙1</th>
+<th style="text-align:right">𝑝1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Alex</td>
+<td>1</td>
+<td style="text-align:right">10</td>
+<td>Blue</td>
+<td>1</td>
+<td style="text-align:right">0.666667</td>
+<td style="text-align:right">0.693147</td>
+<td style="text-align:right">0.333333</td>
+<td style="text-align:right">1.50</td>
+<td style="text-align:right">1.893147</td>
+<td style="text-align:right">0.869114</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Brunei</td>
+<td>1</td>
+<td style="text-align:right">90</td>
+<td>Green</td>
+<td>1</td>
+<td style="text-align:right">0.666667</td>
+<td style="text-align:right">0.693147</td>
+<td style="text-align:right">0.333333</td>
+<td style="text-align:right">-0.75</td>
+<td style="text-align:right">0.093147</td>
+<td style="text-align:right">0.523270</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Candy</td>
+<td>0</td>
+<td style="text-align:right">30</td>
+<td>Blue</td>
+<td>0</td>
+<td style="text-align:right">0.666667</td>
+<td style="text-align:right">0.693147</td>
+<td style="text-align:right">-0.666667</td>
+<td style="text-align:right">-0.75</td>
+<td style="text-align:right">0.093147</td>
+<td style="text-align:right">0.523270</td>
+</tr>
+<tr>
+<td>3</td>
+<td>David</td>
+<td>1</td>
+<td style="text-align:right">30</td>
+<td>Red</td>
+<td>0</td>
+<td style="text-align:right">0.666667</td>
+<td style="text-align:right">0.693147</td>
+<td style="text-align:right">-0.666667</td>
+<td style="text-align:right">-0.75</td>
+<td style="text-align:right">0.093147</td>
+<td style="text-align:right">0.523270</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Eric</td>
+<td>0</td>
+<td style="text-align:right">30</td>
+<td>Green</td>
+<td>1</td>
+<td style="text-align:right">0.666667</td>
+<td style="text-align:right">0.693147</td>
+<td style="text-align:right">0.333333</td>
+<td style="text-align:right">-0.75</td>
+<td style="text-align:right">0.093147</td>
+<td style="text-align:right">0.523270</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Felicity</td>
+<td>0</td>
+<td style="text-align:right">10</td>
+<td>Blue</td>
+<td>1</td>
+<td style="text-align:right">0.666667</td>
+<td style="text-align:right">0.693147</td>
+<td style="text-align:right">0.333333</td>
+<td style="text-align:right">1.50</td>
+<td style="text-align:right">1.893147</td>
+<td style="text-align:right">0.869114</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><img src="/images/gradient_boosting_classification/tree0.svg" alt="tree 0"></p>
+<p>In Iteration 0, Let’s look at each step.</p>
+<p>In Step 2.1, We calculate residuals, that is $y-p_0$. </p>
+<p>In step 2.2, we fit a regression tree as above.</p>
+<p>In step 2.3, we calculate $\gamma$. </p>
+<ul>
+<li>For the first leaf, we have two samples (Alex and Felicity). $\gamma$ is: (1/3+1/3)/((1-2/3)<em>2/3+(1-2/3)</em>2/3)=1.5</li>
+</ul>
+<ul>
+<li>For the second leaf, we have four samples. $\gamma$ is:(1/3-2/3-2/3+1/3)/(4<em>(1-2/3)</em>2/3)=-0.75</li>
+</ul>
+<p>In Step 2.4, F(x) is updated.</p>
+<p>Now, let’s check another iteration</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iteration(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>The output is</p>
+<blockquote>
+<p>[1 2 1 1 1 1]<br>for leaf 1, we have 5 related samples. and gamma is -0.31564962030401844<br>for leaf 2, we have 1 related samples. and gamma is 1.9110594001952543</p>
+</blockquote>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>name</th>
+<th style="text-align:right">popcorn</th>
+<th style="text-align:right">age</th>
+<th>color</th>
+<th style="text-align:right">y</th>
+<th style="text-align:right">𝑝1</th>
+<th style="text-align:right">𝑙1</th>
+<th style="text-align:right">𝑟1</th>
+<th style="text-align:right">𝛾1</th>
+<th style="text-align:right">𝑙2</th>
+<th style="text-align:right">𝑝2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Alex</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">10</td>
+<td>Blue</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">0.869114</td>
+<td style="text-align:right">1.893147</td>
+<td style="text-align:right">0.130886</td>
+<td style="text-align:right">-0.315650</td>
+<td style="text-align:right">1.640627</td>
+<td style="text-align:right">0.837620</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Brunei</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">90</td>
+<td>Green</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">0.523270</td>
+<td style="text-align:right">0.093147</td>
+<td style="text-align:right">0.476730</td>
+<td style="text-align:right">1.911059</td>
+<td style="text-align:right">1.621995</td>
+<td style="text-align:right">0.835070</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Candy</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">30</td>
+<td>Blue</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">0.523270</td>
+<td style="text-align:right">0.093147</td>
+<td style="text-align:right">-0.523270</td>
+<td style="text-align:right">-0.315650</td>
+<td style="text-align:right">-0.159373</td>
+<td style="text-align:right">0.460241</td>
+</tr>
+<tr>
+<td>3</td>
+<td>David</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">30</td>
+<td>Red</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">0.523270</td>
+<td style="text-align:right">0.093147</td>
+<td style="text-align:right">-0.523270</td>
+<td style="text-align:right">-0.315650</td>
+<td style="text-align:right">-0.159373</td>
+<td style="text-align:right">0.460241</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Eric</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">30</td>
+<td>Green</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">0.523270</td>
+<td style="text-align:right">0.093147</td>
+<td style="text-align:right">0.476730</td>
+<td style="text-align:right">-0.315650</td>
+<td style="text-align:right">-0.159373</td>
+<td style="text-align:right">0.460241</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Felicity</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">10</td>
+<td>Blue</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">0.869114</td>
+<td style="text-align:right">1.893147</td>
+<td style="text-align:right">0.130886</td>
+<td style="text-align:right">-0.315650</td>
+<td style="text-align:right">1.640627</td>
+<td style="text-align:right">0.837620</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><img src="/images/gradient_boosting_classification/tree1.svg" alt="tree 1"></p>
+<p>For Iteration 2, we have two leaves. <br /><br>For Leaf 1, there are 5 samples. And $\gamma$ is</p>
+<p>(0.130886+-0.523270+-0.523270+0.476730+0.130886)/(2<em>0.869114</em>(1-0.869114)+3<em>0.523270</em>(1-0.523270))=-0.3156498224562022</p>
+<p>For Leaf 2, there is only 1 sample. And 𝛾 is 0.476730/(0.523270*(1-0.523270))=1.9110593001700842</p>
+<p>Let’s check another iteration</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iteration(<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<p>The output:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>no</th>
+<th>name</th>
+<th style="text-align:right">popcorn</th>
+<th style="text-align:right">age</th>
+<th>color</th>
+<th style="text-align:right">y</th>
+<th style="text-align:right">𝑝2</th>
+<th style="text-align:right">𝑙2</th>
+<th style="text-align:right">𝑟2</th>
+<th style="text-align:right">𝛾2</th>
+<th style="text-align:right">𝑙3</th>
+<th style="text-align:right">𝑝3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Alex</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">10</td>
+<td>Blue</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">0.837620</td>
+<td style="text-align:right">1.640627</td>
+<td style="text-align:right">0.162380</td>
+<td style="text-align:right">1.193858</td>
+<td style="text-align:right">2.595714</td>
+<td style="text-align:right">0.930585</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Brunei</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">90</td>
+<td>Green</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">0.835070</td>
+<td style="text-align:right">1.621995</td>
+<td style="text-align:right">0.164930</td>
+<td style="text-align:right">-0.244390</td>
+<td style="text-align:right">1.426483</td>
+<td style="text-align:right">0.806353</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Candy</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">30</td>
+<td>Blue</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">0.460241</td>
+<td style="text-align:right">-0.159373</td>
+<td style="text-align:right">-0.460241</td>
+<td style="text-align:right">-0.244390</td>
+<td style="text-align:right">-0.354885</td>
+<td style="text-align:right">0.412198</td>
+</tr>
+<tr>
+<td>3</td>
+<td>David</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">30</td>
+<td>Red</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">0.460241</td>
+<td style="text-align:right">-0.159373</td>
+<td style="text-align:right">-0.460241</td>
+<td style="text-align:right">-0.244390</td>
+<td style="text-align:right">-0.354885</td>
+<td style="text-align:right">0.412198</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Eric</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">30</td>
+<td>Green</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">0.460241</td>
+<td style="text-align:right">-0.159373</td>
+<td style="text-align:right">0.539759</td>
+<td style="text-align:right">-0.244390</td>
+<td style="text-align:right">-0.354885</td>
+<td style="text-align:right">0.412198</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Felicity</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">10</td>
+<td>Blue</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">0.837620</td>
+<td style="text-align:right">1.640627</td>
+<td style="text-align:right">0.162380</td>
+<td style="text-align:right">1.193858</td>
+<td style="text-align:right">2.595714</td>
+<td style="text-align:right">0.930585</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><img src="/images/gradient_boosting_classification/tree2.svg" alt="tree 2"></p>
+<p>Let’s call iteration 3 and 4</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iteration(<span class="number">3</span>)</span><br><span class="line">iteration(<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+<p>Now, let’s take a look at the loss and accuracy:</p>
+<p>Accuracy:</p>
+<p><img src="/images/gradient_boosting_classification/score.png" alt="Accuracy"></p>
+<p>Loss:</p>
+<p><img src="/images/gradient_boosting_classification/loss.png" alt="Loss"></p>
+<p>The code is here:</p>
+<p><a href="https://github.com/EricWebsmith/machine_learning_from_scrach/blob/master/gradiant_boosting_classification.ipynb" target="_blank" rel="noopener">https://github.com/EricWebsmith/machine_learning_from_scrach/blob/master/gradiant_boosting_classification.ipynb</a></p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="https://en.wikipedia.org/wiki/Gradient_boosting" target="_blank" rel="noopener">Gradient Boosting (Wikipedia)</a></p>
+<p><a href="https://www.youtube.com/watch?v=jxuNLH5dXCs" target="_blank" rel="noopener">Gradient Boost Part 3: Classification — Youtube StatQuest</a></p>
+<p><a href="https://www.youtube.com/watch?v=StWY5QWMXCw" target="_blank" rel="noopener">Gradient Boost Part 4: Classification Details — Youtube StatQuest</a></p>
+<p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html" target="_blank" rel="noopener">sklearn.tree.DecisionTreeRegressor — scikit-learn 0.21.3 documentation</a></p>
+<p><a href="https://scikit-learn.org/stable/auto_examples/tree/plot_unveil_tree_structure.html" target="_blank" rel="noopener">Understanding the decision tree structure — scikit-learn 0.21.3 documentation</a></p>
+
     </article>
     <!-- license  -->
     
@@ -513,7 +999,7 @@ e^l=\frac{p}{1-p} \\
             <p>Author：<a href="https://EricWebsmith.github.io">Eric Websmith</a>
             <p>Url: <a href="https://ericwebsmith.github.io/2020/04/19/GradientBoostingClassification/">https://ericwebsmith.github.io/2020/04/19/GradientBoostingClassification/</a>
             <p>Publish Date: <a href="https://ericwebsmith.github.io/2020/04/19/GradientBoostingClassification/">April 19th 2020, 5:44:42 pm</a>
-            <p>Updated Date: <a href="https://ericwebsmith.github.io/2020/04/19/GradientBoostingClassification/">April 19th 2020, 5:10:43 pm</a>
+            <p>Updated Date: <a href="https://ericwebsmith.github.io/2020/04/19/GradientBoostingClassification/">April 19th 2020, 6:29:00 pm</a>
             <p>License: We use <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">creativecommons 4.0 </a>license</p>
         </div>
     
@@ -642,7 +1128,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Gradiant-Boosting-Classification"><span class="toc-number">1.</span> <span class="toc-text">Gradiant Boosting Classification</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Optional-From-Gradient-Boosting-to-Gradient-Boosting-Regression"><span class="toc-number">2.</span> <span class="toc-text">(Optional) From Gradient Boosting to Gradient Boosting Regression</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#The-algorithm"><span class="toc-number">1.</span> <span class="toc-text">The algorithm</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Optional-From-Gradient-Boosting-to-Gradient-Boosting-Regression"><span class="toc-number">2.</span> <span class="toc-text">(Optional) From Gradient Boosting to Gradient Boosting Regression</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Code"><span class="toc-number">3.</span> <span class="toc-text">Code</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -655,10 +1141,6 @@ top:50vh;
     <div class="sidebar-content sidebar-content-show-archive">
           <div class="sidebar-panel-archives">
     <!-- 在ejs中将archive按照时间排序 -->
-    
-    
-    
-    
     
     
     
@@ -734,15 +1216,19 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
+        <span class="sidebar-tag-name" data-tags="Gradient Boosting"><span class="iconfont-archer">&#xe606;</span>Gradient Boosting</span>
+    
+        <span class="sidebar-tag-name" data-tags="Regression"><span class="iconfont-archer">&#xe606;</span>Regression</span>
+    
+        <span class="sidebar-tag-name" data-tags="Boosting"><span class="iconfont-archer">&#xe606;</span>Boosting</span>
+    
+        <span class="sidebar-tag-name" data-tags="Classification"><span class="iconfont-archer">&#xe606;</span>Classification</span>
+    
         <span class="sidebar-tag-name" data-tags="AutoML"><span class="iconfont-archer">&#xe606;</span>AutoML</span>
     
         <span class="sidebar-tag-name" data-tags="Deep Learning"><span class="iconfont-archer">&#xe606;</span>Deep Learning</span>
     
         <span class="sidebar-tag-name" data-tags="Optimization"><span class="iconfont-archer">&#xe606;</span>Optimization</span>
-    
-        <span class="sidebar-tag-name" data-tags="Gradient Boosting"><span class="iconfont-archer">&#xe606;</span>Gradient Boosting</span>
-    
-        <span class="sidebar-tag-name" data-tags="Regression"><span class="iconfont-archer">&#xe606;</span>Regression</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
