@@ -33,8 +33,8 @@
 <meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_classification/tree2.svg">
 <meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_classification/score.png">
 <meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_classification/loss.png">
-<meta property="article:published_time" content="2020-04-19T09:44:42.000Z">
-<meta property="article:modified_time" content="2020-04-19T10:29:00.317Z">
+<meta property="article:published_time" content="2020-04-19T09:12:52.000Z">
+<meta property="article:modified_time" content="2020-04-19T10:52:22.919Z">
 <meta property="article:author" content="Eric Websmith">
 <meta property="article:tag" content="Gradient Boosting">
 <meta property="article:tag" content="Boosting">
@@ -445,8 +445,8 @@ height:50vh;
 <p>Here the picture looks more complicated than the one on regression. The purple ones are log of odds (<strong>l</strong>). The green ones are probabilities. We firstly calculate log of odds of <strong>y</strong>, instead of average. We then calculate probabilities using log of odds. We build a regression tree. The leaves are colored green. The leaves have residuals. We use the probability residuals to produce log-of-odds residuals or $\gamma$. $\gamma$ is then used to update <strong>l</strong>. This continues until we are satisfied with the results or we are running out of iterations.</p>
 <hr>
 <p><strong>The Steps</strong></p>
-<p>Step 1: Calculate the log of odds of y. This is also the first estimation of y. Here $n_1$ is the number of true values and $n_0$ of false values.</p>
-<script type="math/tex; mode=display">l_0(x)=\log \frac{n_1}{n_0}</script><p>For each $x_i$, the probability is:</p>
+<p>Step 1: Calculate the log of odds of y. This is also the first estimation of y. Here <script type="math/tex">n_1</script> is the number of true values and <script type="math/tex">n_0</script> of false values.</p>
+<script type="math/tex; mode=display">l_0(x)=\log \frac{n_1}{n_0}</script><p>For each <script type="math/tex">x_i</script>, the probability is:</p>
 <script type="math/tex; mode=display">
 p_{0i}=\frac{e^{l_{0i}}}{1+e^{l_{0i}}}</script><p>The prediction is:</p>
 <script type="math/tex; mode=display">
@@ -455,8 +455,11 @@ f_{0i}=\begin{cases}
 1 & p_{0i}>=0.5
 \end{cases}</script><p>Step 2 for m in 1 to M: <br /></p>
 <ul>
-<li>Step 2.1: Compute so-call pseudo-residuals:<script type="math/tex; mode=display">r_{im}=f_i-p_i</script></li>
-<li><p>Step 2.2: Fit a regression tree $t<em>m(x)$ to pseudo-residuals and create terminal regions (leaves) $R</em>{jm}$ for $j=1…Jm$ <br /></p>
+<li>Step 2.1: Compute so-call pseudo-residuals:</li>
+</ul>
+<script type="math/tex; mode=display">
+r_{im}=f_i-p_i</script><ul>
+<li><p>Step 2.2: Fit a regression tree <script type="math/tex">t_m(x)</script> to pseudo-residuals and create terminal regions (leaves) <script type="math/tex">R_{jm}</script> for <script type="math/tex">j=1...Jm</script> <br /></p>
 </li>
 <li><p>Step 2.3: For each leaf of the tree, there are $p_j$ elements, compute $\gamma$ as following equation. <br /></p>
 </li>
@@ -475,27 +478,35 @@ f_{mi}=\begin{cases}
 1 & p_{mi}>=0.5
 \end{cases}</script><p>Step 3. Output <script type="math/tex">f_M(x)</script></p>
 <hr>
-<h1 id="Optional-From-Gradient-Boosting-to-Gradient-Boosting-Regression"><a href="#Optional-From-Gradient-Boosting-to-Gradient-Boosting-Regression" class="headerlink" title="(Optional) From Gradient Boosting to Gradient Boosting Regression"></a>(Optional) From Gradient Boosting to Gradient Boosting Regression</h1><p>The above knowledge is enough for writing BGR code from scratch. But I want to explain more about gradient boosting. GB is a meta-algorithm that can be applied to both regression and classification. The above one is only a specific form for regression. In the following, I will introduce the general gradient boosting algorithm and deduce GBR from GB.</p>
+<h1 id="Optional-From-Gradient-Boosting-to-Gradient-Boosting-Classification"><a href="#Optional-From-Gradient-Boosting-to-Gradient-Boosting-Classification" class="headerlink" title="(Optional) From Gradient Boosting to Gradient Boosting Classification"></a>(Optional) From Gradient Boosting to Gradient Boosting Classification</h1><p>The above knowledge is enough for writing BGR code from scratch. But I want to explain more about gradient boosting. GB is a meta-algorithm that can be applied to both regression and classification. The above one is only a specific form for regression. In the following, I will introduce the general gradient boosting algorithm and deduce GBR from GB.</p>
 <p>Let’s first look at the GB steps</p>
 <hr>
 <p><strong>The Steps</strong></p>
-<p>Input: training set ${(x<em>i, y_i)}</em>{i=1}^{n}$, a differentiable loss function $L(y, F(x))$, number of iterations M</p>
+<p>Input: training set <script type="math/tex">\{(x_i, y_i)\}_{i=1}^{n}</script>, a differentiable loss function <script type="math/tex">L(y, F(x))</script>, number of iterations M</p>
 <p>Algorithm:</p>
 <p>Step 1: Initialize model with a constant value:</p>
-<script type="math/tex; mode=display">F_0(x)=\underset{\gamma}{\operatorname{argmin}}\sum_{i=1}^{n}L(y_i, \gamma)</script><p>Step 2 for m in 1 to M: <br /></p>
+<script type="math/tex; mode=display">
+F_0(x)=\underset{\gamma}{\operatorname{argmin}}\sum_{i=1}^{n}L(y_i, \gamma)</script><p>Step 2 for m in 1 to M: <br /></p>
 <ul>
-<li>Step 2.1: Compute so-call pseudo-residuals:<script type="math/tex; mode=display">r_{im}=-[\frac{\partial L(y_i, F(x_i))}{\partial F(x_i)}], {F(x)=F_{m-1}(x)}</script></li>
-<li><p>Step 2.2: Fit a weak learner <script type="math/tex">h_m(x)</script> to pseudo-residuals. and create terminal regions <script type="math/tex">R_{jm}</script>, for <script type="math/tex">j=1...J_m</script><br /></p>
+<li>Step 2.1: Compute so-call pseudo-residuals:</li>
+<li><script type="math/tex; mode=display">
+r_{im}=-[\frac{\partial L(y_i, F(x_i))}{\partial F(x_i)}], {F(x)=F_{m-1}(x)}</script></li>
+<li><p>Step 2.2: Fit a weak learner <script type="math/tex">h_m(x)</script> to pseudo-residuals. and create terminal regions <script type="math/tex">R_{jm}</script>, for <script type="math/tex">j=1...J_m</script>.<br /></p>
 </li>
-<li><p>Step 2.3: For each leaf of the tree, compute $\gamma$ as the following equation. Here $\hat{r}$ is the predicted residual produced by $h_m(x)$.<br /></p>
-<script type="math/tex; mode=display">\gamma_{jm}=\underset{\gamma}{\operatorname{argmin}}\sum_{x_i \in R_{jm}}^{n}L(y_i, F_{m-1}(x_i)+\gamma)</script></li>
+</ul>
+<ul>
+<li><p>Step 2.3: For each leaf of the tree, compute <script type="math/tex">\gamma</script> as the following equation. </p>
+<script type="math/tex; mode=display">
+\gamma_{jm}=\underset{\gamma}{\operatorname{argmin}}\sum_{x_i \in R_{jm}}^{n}L(y_i, F_{m-1}(x_i)+\gamma)</script></li>
 <li><p>Step 2.4: Update the model with learning rate $\alpha$:</p>
-<script type="math/tex; mode=display">F_m(x)=F_{m-1}+\alpha\gamma_m</script></li>
+<script type="math/tex; mode=display">
+F_m(x)=F_{m-1}+\alpha\gamma_m</script></li>
 </ul>
 <p>Step 3. Output <script type="math/tex">F_M(x)</script></p>
 <p>Lost Function:</p>
 <p>To deduce the GB to GBC, I simply define a loss function and solve the loss function in step 1, 2.1 and 2.3. We use Log of Likelihood as the loss function:</p>
-<script type="math/tex; mode=display">L(y, F(x))=-\sum_{i=1}^{N}(y_i* log(p) + (1-y_i)*log(1-p))</script><p>Since this is a function of probability and we need a function of log of odds($l$), let’s focus on the middle part and transform it into a function of $l$.</p>
+<script type="math/tex; mode=display">
+L(y, F(x))=-\sum_{i=1}^{N}(y_i* log(p) + (1-y_i)*log(1-p))</script><p>Since this is a function of probability and we need a function of log of odds(<script type="math/tex">l</script>), let’s focus on the middle part and transform it into a function of <script type="math/tex">l</script>.</p>
 <p>The middle part is:</p>
 <script type="math/tex; mode=display">
 -(y*\log(p)+(1-y)*\log(1-p)) \\
@@ -998,8 +1009,8 @@ e^l=\frac{p}{1-p} \\
         <div class="license-wrapper">
             <p>Author：<a href="https://EricWebsmith.github.io">Eric Websmith</a>
             <p>Url: <a href="https://ericwebsmith.github.io/2020/04/19/GradientBoostingClassification/">https://ericwebsmith.github.io/2020/04/19/GradientBoostingClassification/</a>
-            <p>Publish Date: <a href="https://ericwebsmith.github.io/2020/04/19/GradientBoostingClassification/">April 19th 2020, 5:44:42 pm</a>
-            <p>Updated Date: <a href="https://ericwebsmith.github.io/2020/04/19/GradientBoostingClassification/">April 19th 2020, 6:29:00 pm</a>
+            <p>Publish Date: <a href="https://ericwebsmith.github.io/2020/04/19/GradientBoostingClassification/">April 19th 2020, 5:12:52 pm</a>
+            <p>Updated Date: <a href="https://ericwebsmith.github.io/2020/04/19/GradientBoostingClassification/">April 19th 2020, 6:52:22 pm</a>
             <p>License: We use <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">creativecommons 4.0 </a>license</p>
         </div>
     
@@ -1128,7 +1139,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#The-algorithm"><span class="toc-number">1.</span> <span class="toc-text">The algorithm</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Optional-From-Gradient-Boosting-to-Gradient-Boosting-Regression"><span class="toc-number">2.</span> <span class="toc-text">(Optional) From Gradient Boosting to Gradient Boosting Regression</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Code"><span class="toc-number">3.</span> <span class="toc-text">Code</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#The-algorithm"><span class="toc-number">1.</span> <span class="toc-text">The algorithm</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Optional-From-Gradient-Boosting-to-Gradient-Boosting-Classification"><span class="toc-number">2.</span> <span class="toc-text">(Optional) From Gradient Boosting to Gradient Boosting Classification</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Code"><span class="toc-number">3.</span> <span class="toc-text">Code</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -1218,17 +1229,17 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="Gradient Boosting"><span class="iconfont-archer">&#xe606;</span>Gradient Boosting</span>
     
-        <span class="sidebar-tag-name" data-tags="Regression"><span class="iconfont-archer">&#xe606;</span>Regression</span>
-    
         <span class="sidebar-tag-name" data-tags="Boosting"><span class="iconfont-archer">&#xe606;</span>Boosting</span>
     
         <span class="sidebar-tag-name" data-tags="Classification"><span class="iconfont-archer">&#xe606;</span>Classification</span>
     
         <span class="sidebar-tag-name" data-tags="AutoML"><span class="iconfont-archer">&#xe606;</span>AutoML</span>
     
-        <span class="sidebar-tag-name" data-tags="Deep Learning"><span class="iconfont-archer">&#xe606;</span>Deep Learning</span>
-    
         <span class="sidebar-tag-name" data-tags="Optimization"><span class="iconfont-archer">&#xe606;</span>Optimization</span>
+    
+        <span class="sidebar-tag-name" data-tags="Regression"><span class="iconfont-archer">&#xe606;</span>Regression</span>
+    
+        <span class="sidebar-tag-name" data-tags="Deep Learning"><span class="iconfont-archer">&#xe606;</span>Deep Learning</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1296,25 +1307,9 @@ jsonContent:
     </div>
     <!-- async load share.js -->
     
-        <script src="/scripts/share.js" async></script>    
+        <script src="/scripts/share.js" async></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->    
      
-    <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
-
-</body>
+    </body>
 </html>
 
 
