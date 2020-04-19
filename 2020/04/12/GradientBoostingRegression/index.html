@@ -35,9 +35,10 @@
 <meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_regression/tree4.png">
 <meta property="og:image" content="https://ericwebsmith.github.io/images/gradient_boosting_regression/loss.png">
 <meta property="article:published_time" content="2020-04-12T06:44:42.000Z">
-<meta property="article:modified_time" content="2020-04-12T08:45:22.478Z">
+<meta property="article:modified_time" content="2020-04-12T09:17:35.310Z">
 <meta property="article:author" content="Eric Websmith">
-<meta property="article:tag" content="gradient boosting">
+<meta property="article:tag" content="Gradient Boosting">
+<meta property="article:tag" content="Regression">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://ericwebsmith.github.io/images/gradient_boosting_regression/gradient_boosting_regression.png">
     <meta http-equiv="Cache-control" content="no-cache">
@@ -287,7 +288,9 @@ height:50vh;
                 
                     <div class= post-intro-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "gradient boosting">gradient boosting</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Gradient Boosting">Gradient Boosting</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Regression">Regression</a>
     
 </div>
                 
@@ -433,6 +436,7 @@ height:50vh;
 3. Write a gradient boosting regressor from scratch
 </code></pre><h1 id="The-algorithm"><a href="#The-algorithm" class="headerlink" title="The algorithm"></a>The algorithm</h1><p>The following plot illustrates the algorithm.</p>
 <p><img src="/images/gradient_boosting_regression/gradient_boosting_regression.png" alt="Gradient Boosting Regression"></p>
+<p>(Picture taken from  Youtuber <a href="https://www.youtube.com/channel/UCtYLUTtgS3k1Fg4y5tAhLbw" target="_blank" rel="noopener">StatQuest with Josh Starmer</a>)</p>
 <p>From the plot above, the first part is a stump, which is the average of <strong>y</strong>. We then add several trees to it. In the following trees, the target is not y. Instead, the target is the residual or the true value subtract previous prediction.</p>
 <script type="math/tex; mode=display">
 residual=true\_value - previous\_prediction</script><p>That is why we say in Gradient Boosting trains a series of weak learners, each focuses on the errors of the previous one. The residual predictions are multiplied by the learning rate (0.1 here) before added to the average.</p>
@@ -1168,7 +1172,7 @@ r_{im}=-[\frac{\partial L(y_i, F(x_i))}{\partial F(x_i)}]_{F(x)=F_{m-1}(x)}</scr
 <h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference:"></a>Reference:</h1><p><a href="https://en.wikipedia.org/wiki/Gradient_boosting" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Gradient_boosting</a></p>
 <p><a href="https://www.youtube.com/watch?v=3CC4N4z3GJc&amp;list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF&amp;index=44" target="_blank" rel="noopener">https://www.youtube.com/watch?v=3CC4N4z3GJc&amp;list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF&amp;index=44</a>    </p>
 <p><a href="https://www.youtube.com/watch?v=2xudPOBz-vs&amp;list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF&amp;index=45" target="_blank" rel="noopener">https://www.youtube.com/watch?v=2xudPOBz-vs&amp;list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF&amp;index=45</a></p>
-<p>This article is based on this video.</p>
+<p>This article is based on a video from StatQuest, I strongly recommend this Youtube channel.</p>
 
     </article>
     <!-- license  -->
@@ -1177,13 +1181,18 @@ r_{im}=-[\frac{\partial L(y_i, F(x_i))}{\partial F(x_i)}]_{F(x)=F_{m-1}(x)}</scr
             <p>Author：<a href="https://EricWebsmith.github.io">Eric Websmith</a>
             <p>Url: <a href="https://ericwebsmith.github.io/2020/04/12/GradientBoostingRegression/">https://ericwebsmith.github.io/2020/04/12/GradientBoostingRegression/</a>
             <p>Publish Date: <a href="https://ericwebsmith.github.io/2020/04/12/GradientBoostingRegression/">April 12th 2020, 2:44:42 pm</a>
-            <p>Updated Date: <a href="https://ericwebsmith.github.io/2020/04/12/GradientBoostingRegression/">April 12th 2020, 4:45:22 pm</a>
+            <p>Updated Date: <a href="https://ericwebsmith.github.io/2020/04/12/GradientBoostingRegression/">April 12th 2020, 5:17:35 pm</a>
             <p>License: We use <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">creativecommons 4.0 </a>license</p>
         </div>
     
     <!-- paginator  -->
     <ul class="post-paginator">
         <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2020/04/19/GradientBoostingClassification/" title= "Gradient Boosting Classification from Scratch">
+                    <div class="nextTitle">Gradient Boosting Classification from Scratch</div>
+                </a>
             
         </li>
         <li class="previous">
@@ -1346,9 +1355,20 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 3
+        Total : 4
         </div>
         <!-- search  -->
         
@@ -1361,6 +1381,11 @@ top:50vh;
     
     <div class="archive-year"> 2020 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/19</span><a class="archive-post-title" href= "/2020/04/19/GradientBoostingClassification/" >Gradient Boosting Classification from Scratch</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1382,13 +1407,15 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="gradient boosting"><span class="iconfont-archer">&#xe606;</span>gradient boosting</span>
-    
         <span class="sidebar-tag-name" data-tags="AutoML"><span class="iconfont-archer">&#xe606;</span>AutoML</span>
     
         <span class="sidebar-tag-name" data-tags="Deep Learning"><span class="iconfont-archer">&#xe606;</span>Deep Learning</span>
     
         <span class="sidebar-tag-name" data-tags="Optimization"><span class="iconfont-archer">&#xe606;</span>Optimization</span>
+    
+        <span class="sidebar-tag-name" data-tags="Gradient Boosting"><span class="iconfont-archer">&#xe606;</span>Gradient Boosting</span>
+    
+        <span class="sidebar-tag-name" data-tags="Regression"><span class="iconfont-archer">&#xe606;</span>Regression</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>

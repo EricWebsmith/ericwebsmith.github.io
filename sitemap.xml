@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://ericwebsmith.github.io/2020/04/19/GradientBoostingClassification/</loc>
+    
+    <lastmod>2020-04-19T09:10:43.495Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://ericwebsmith.github.io/2020/04/12/GradientBoostingRegression/</loc>
     
-    <lastmod>2020-04-12T08:45:22.478Z</lastmod>
+    <lastmod>2020-04-12T09:17:35.310Z</lastmod>
     
   </url>
   
